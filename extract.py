@@ -3,7 +3,8 @@ import re
 import json
 import csv
 
-def rfixerExtractor (path_to_rfixer_datafile):
+
+def rfixerExtractor(path_to_rfixer_datafile):
     if (not os.path.isfile(path_to_rfixer_datafile)):
         return None
 
@@ -20,7 +21,7 @@ def rfixerExtractor (path_to_rfixer_datafile):
         # print (f"Skipping {path_to_rfixer_datafile}")
         return None
 
-    try: 
+    try:
         neg = re.findall(r'---\n((?:(?!\\n).)*)', data, re.DOTALL)
         neg_list = list(filter(None, neg[0].split('\n')))
     except:
@@ -30,7 +31,7 @@ def rfixerExtractor (path_to_rfixer_datafile):
     return pos_list, neg_list
 
 
-def num_ex_sets(file_in): 
+def num_ex_sets(file_in):
     '''
     This function finds the number of example sets in a csv file containing prompt examples
 
@@ -44,7 +45,7 @@ def num_ex_sets(file_in):
         in_reader = csv.reader(inner, delimiter=',')
 
         # get the number of columns in the file
-        num_cols = 0 
+        num_cols = 0
         for row in in_reader:
             num_cols = len(row)
             break
@@ -52,7 +53,7 @@ def num_ex_sets(file_in):
     return int(num_cols / 2)
 
 
-def extractCSV (file_in):
+def extractCSV(file_in):
     '''
     This function reads in a csv file containing a list of positive and negative examples.
 
@@ -65,7 +66,7 @@ def extractCSV (file_in):
 
     with open(file_in) as inner:
         in_reader = csv.reader(inner, delimiter=',')
-        
+
         # add placeholders for each column to examples
         for i in range(num_ex_sets(file_in) * 2):
             examples.append([])
@@ -79,12 +80,15 @@ def extractCSV (file_in):
             else:
                 for column in range(len(row)):
                     examples[column].append(row[column])
-            
-    return examples   
+
+    return examples
+
 
 """
 
 """
+
+
 def extractRegel(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
@@ -105,7 +109,8 @@ def extractRegel(file_path):
 
     return pos_list, neg_list, gt
 
-def extractAutoTutorTrue (file_path):
+
+def extractAutoTutorTrue(file_path):
     if (not os.path.isfile(file_path)):
         return None
 
@@ -116,19 +121,31 @@ def extractAutoTutorTrue (file_path):
         pos = re.findall(r'\+\+\+(.*?)---', data, re.DOTALL)
         pos_list = list(filter(None, pos[0].split('\n')))
     except:
-        # print (f"Skipping {file_path}")
         return None
 
-    try: 
+    try:
         neg = re.findall(r'---\n((?:(?!\\n).)*)', data, re.DOTALL)
         neg_list = list(filter(None, neg[0].split('\n')))
     except:
-        # print (f"Skipping {file_path}")
         return None
 
     gt = re.findall(r'(.+)(?=\n\+\+\+)', data)
     return pos_list, neg_list, gt[0]
 
+
+def golfExtractor(path_to_golf_dir):
+    if not os.path.isdir(path_to_golf_dir):
+        print(
+            f"Directory specified at {path_to_golf_dir} doesn't exist. Continuing")
+        return None
+
+    with open(path_to_golf_dir + "/left.txt", "r") as f:
+        pos_list = f.read().split("\n")
+
+    with open(path_to_golf_dir + "/right.txt", "r") as f:
+        neg_list = f.read().split("\n")
+
+    return pos_list, neg_list
 
 
 def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, datasetExtractor, outfilename="dataset.json"):
@@ -141,39 +158,57 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
         "Tasks": []
     }
 
-
-    os.makedirs("Datasets/")
+    try:
+        os.makedirs("Datasets/")
+    except:
+        pass
 
     for path_to_dir in path_to_dirs:
         if not os.path.isdir(path_to_dir):
-            #raise SystemExit(f"Directory Path ({path_to_dir}) doesn't exist. Exiting")
-            print (f"Directory specified at {path_to_dir} doesn't exist. Continuing")
+            # raise SystemExit(f"Directory Path ({path_to_dir}) doesn't exist. Exiting")
+            print(
+                f"Directory specified at {path_to_dir} doesn't exist. Continuing")
             continue
 
         for root, dirs, files in os.walk(path_to_dir):
+            if (datasetExtractor == golfExtractor):
+                for dir in dirs:
+                    pos_list, neg_list = datasetExtractor(
+                        os.path.join(root, dir))
+                    dataset["Tasks"].append({
+                        "positiveExamples": pos_list,
+                        "negativeExamples": neg_list,
+                        "groundTruth": ""
+                    })
+
+                break
+
             for name in files:
                 filename = os.path.join(root, name)
                 # print("Working on " + name)
                 if not (os.path.splitext(filename)[1] == ".txt" or os.path.splitext(filename)[1] == ".csv" or os.path.splitext(filename)[1] == ""):
-                   print (f"File: {filename} not a valid type")
-                   continue
-                
+                    print(f"File: {filename} not a valid type")
+                    continue
+
                 examples = datasetExtractor(filename)
 
                 if examples == None:
-                   continue
-                
-                if (datasetExtractor == extractCSV):
-                  assert isinstance(examples, list)
-                  for _ in range (int (len(examples) / 2)):
-                    pos_list = examples.pop(0)
-                    neg_list = examples.pop(0)
+                    continue
 
-                    dataset["Tasks"].append({
-                        "positiveExamples": pos_list,
-                        "negativeExamples": neg_list,
-                        "groundTruth": []
-                    })
+                # if (datasetExtractor == golfExtractor):
+                #     print (os.listdir(path_to_dir))
+
+                elif (datasetExtractor == extractCSV):
+                    assert isinstance(examples, list)
+                    for _ in range(int(len(examples) / 2)):
+                        pos_list = examples.pop(0)
+                        neg_list = examples.pop(0)
+
+                        dataset["Tasks"].append({
+                            "positiveExamples": pos_list,
+                            "negativeExamples": neg_list,
+                            "groundTruth": []
+                        })
 
                 elif (datasetExtractor == extractRegel or datasetExtractor == extractAutoTutorTrue):
                     pos_list, neg_list, gt = examples
@@ -182,7 +217,7 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
                         "negativeExamples": neg_list,
                         "groundTruth": gt
                     })
-                   
+
                 else:
                     pos_list, neg_list = examples
                     dataset["Tasks"].append({
@@ -193,14 +228,19 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
 
     with open("Datasets/" + outfilename, "w") as json_file:
         json.dump(dataset, json_file, indent=4)
-    
+
     return dataset
+
+
 
 Rfixer = convert_dataset_to_json ("/home/shantanu/duality/RFixer/tests", dataset_name="RFixer", dataset_description="Examples from the RFixer Repository Dataset. The repository dataset was collected from multiple sources including Rebele and AutoTutor", datasetExtractor=rfixerExtractor, outfilename="rfixer_dataset.json")
 autoTutor = convert_dataset_to_json ("/home/shantanu/duality/RFixer/tests/clean_AutoTutorWithTrue/", dataset_name="AutoTutor", dataset_description="Examples from Automata Tutor. Data extracted from the RFixer Repository", datasetExtractor=extractAutoTutorTrue, outfilename="automata_tutor.json")
 llmCSV = convert_dataset_to_json ("/home/shantanu/duality/llm-regex-prompting/Example Sheets", dataset_name="CSVFiles", dataset_description="CSV Files used for LLM Prompting", datasetExtractor=extractCSV, outfilename="LLMPromptCSV.json")
 deepRegex = convert_dataset_to_json ("/home/shantanu/duality/regel/exp/deepregex/benchmark", dataset_name="DeepRegex", dataset_description="Examples from DeepRegex. Data extracted from the Regel Repository", datasetExtractor=extractRegel, outfilename="DeepRegex.json")
 stackOverflow = convert_dataset_to_json ("/home/shantanu/duality/regel/exp/so/benchmark", dataset_name="SO", dataset_description="Examples from StackOverflow. Data extracted from the Regel Repository", datasetExtractor=extractRegel, outfilename="StackOverflow.json")
+golf = convert_dataset_to_json("/home/shantanu/duality/regex-golf/instances/", dataset_name="Golf", dataset_description="Examples from Golf", datasetExtractor=golfExtractor, outfilename="golf.json")
 
 with open("Datasets/dataset.json", "w") as json_file:
-    json.dump({ "Datasets": [Rfixer, autoTutor, llmCSV, deepRegex, stackOverflow] }, json_file, indent=4)
+    json.dump({ "Datasets": [Rfixer, autoTutor, llmCSV, deepRegex, stackOverflow, golf] }, json_file, indent=4)
+
+
