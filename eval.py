@@ -54,50 +54,26 @@ def calc_accuracy (positive_examples, negative_examples, regex):
 
 
 def rfixerExtractor (path_to_rfixer_datafile):
-  if (not os.path.isfile(path_to_rfixer_datafile)):
-    return None
+    if (not os.path.isfile(path_to_rfixer_datafile)):
+        return None
 
-  data = subprocess.run(['cat', path_to_rfixer_datafile], capture_output=True).stdout.decode('utf-8')
+    data = subprocess.run(['cat', path_to_rfixer_datafile], capture_output=True).stdout.decode('utf-8')
 
-  pos = re.findall(r'\+\+\+(.*?)---', data, re.DOTALL)
-  pos_list = list(filter(None, pos[0].split('\n')))
+    try:
+        pos = re.findall(r'\+\+\+(.*?)---', data, re.DOTALL)
+        pos_list = list(filter(None, pos[0].split('\n')))
+    except:
+        print (f"Skipping {path_to_rfixer_datafile}")
+        return None
 
-  neg = re.findall(r'---\n((?:(?!\\n).)*)', data, re.DOTALL)
-  neg_list = list(filter(None, neg[0].split('\n')))
+    try: 
+        neg = re.findall(r'---\n((?:(?!\\n).)*)', data, re.DOTALL)
+        neg_list = list(filter(None, neg[0].split('\n')))
+    except:
+        print (f"Skipping {path_to_rfixer_datafile}")
+        return None
 
-  return pos_list, neg_list
-
-  
-# def convert_dataset_to_json (path_to_dir, dataset_name, dataset_description, datasetExtractor):
-#   if not os.path.isdir(path_to_dir):
-#      raise SystemExit(f"Directory Path ({path_to_dir}) doesn't exist. Exiting")
-# 
-#   dataset = {
-#        "Dataset Name": dataset_name,
-#        "Description": dataset_description,
-#        "Files": []
-#    }
-#   
-#   for root, dirs, files in os.walk(path_to_dir):
-#       for name in files:
-#           filename = os.path.join(root, name)
-#           examples = datasetExtractor (filename)
-#           print ("Working on " + name)
-#           rfixerAttempt = runRFixer (filename)
-#           geneticAttempt = runGeneticSolver (filename)
-#           if examples:
-#               pos_list, neg_list = examples;
-#               dataset["Files"].append({
-#                   "File": name,
-#                   "positiveExamples": pos_list,
-#                   "negativeExamples": neg_list,
-#                   "groundTruth": [],
-#                   "rfixerAttempt" : rfixerAttempt,
-#                   "geneticAttempt" : geneticAttempt
-#               })
-# 
-#   with open("dataset.json", "w") as json_file:
-#       json.dump(dataset, json_file, indent=4)
+    return pos_list, neg_list
 
 
 def num_ex_sets(file_in): 
@@ -154,7 +130,7 @@ def extractCSV (file_in):
    
 
 
-def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, datasetExtractor):
+def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, datasetExtractor, outfilename="dataset.json"):
     if isinstance(path_to_dirs, str):
         path_to_dirs = [path_to_dirs]
 
@@ -173,8 +149,15 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
         for root, dirs, files in os.walk(path_to_dir):
             for name in files:
                 filename = os.path.join(root, name)
-                print("Working on " + name)
+                # print("Working on " + name)
+                if not (os.path.splitext(filename)[1] == ".txt" or os.path.splitext(filename)[1] == ".csv" or os.path.splitext(filename)[1] == ""):
+                   print (f"File: {filename} not a valid type")
+                   continue
+
                 examples = datasetExtractor(filename)
+
+                if examples == None:
+                   continue
                 
                 if (datasetExtractor == extractCSV):
                   assert isinstance(examples, list)
@@ -196,10 +179,10 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
                         "groundTruth": []
                     })
 
-    with open("dataset.json", "w") as json_file:
+    with open(outfilename, "w") as json_file:
         json.dump(dataset, json_file, indent=4)
 
-convert_dataset_to_json ("/home/shantanu/duality/llm-regex-prompting/Example Sheets/", dataset_name="RFixer Dataset", dataset_description="Examples from the RFixer Repository Dataset", datasetExtractor=extractCSV)
 
+RFixer_Datasets = ["/home/shantanu/duality/RFixer/tests/allRebele", "/home/shantanu/duality/RFixer/tests/benchmark_corpus", "/home/shantanu/duality/RFixer/tests/clean_AutoTutor", "/home/shantanu/duality/RFixer/tests/benchmark_explicit", "/home/shantanu/duality/RFixer/tests/benchmark_explicit2"]
 
-#print (extractCSV("/home/shantanu/duality/llm-regex-prompting/Example Sheets/ex_golf.csv"))
+convert_dataset_to_json (RFixer_Datasets, dataset_name="RFixer Dataset", dataset_description="Examples from the RFixer Repository Dataset", datasetExtractor=rfixerExtractor, outfilename="rfixer_dataset.json")
