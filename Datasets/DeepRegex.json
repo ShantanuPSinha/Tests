@@ -1,0 +1,4206 @@
+{
+    "Dataset Name": "DeepRegex",
+    "Description": "Examples from DeepRegex. Data extracted from the Regel Repository",
+    "Tasks": [
+        {
+            "positiveExamples": [
+                "!a",
+                "@a",
+                "ba",
+                "!@e",
+                "@@ee",
+                "!iou",
+                "!aee"
+            ],
+            "negativeExamples": [
+                "Ae",
+                "!",
+                "@",
+                "e",
+                ",",
+                ",a",
+                ",be"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<low>),<m1>),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "!0",
+                "a00",
+                "1b00",
+                "!01",
+                "!a00",
+                "!!111"
+            ],
+            "negativeExamples": [
+                "0",
+                "",
+                "0a",
+                "0!",
+                "@a",
+                "@!",
+                "@@"
+            ],
+            "groundTruth": "or(startwith(<m0>),concat(<any>,contain(<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "b",
+                "A",
+                "e",
+                "p",
+                "m",
+                "t"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "12",
+                "ab",
+                "Aeb",
+                "1",
+                "!"
+            ],
+            "groundTruth": "and(<let>,<any>)"
+        },
+        {
+            "positiveExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "negativeExamples": [
+                "a",
+                "1",
+                "e",
+                "i",
+                "O",
+                ",",
+                "@"
+            ],
+            "groundTruth": "not(or(or(<vow>,<any>),<let>))"
+        },
+        {
+            "positiveExamples": [
+                "",
+                "a",
+                "A",
+                "@",
+                "0",
+                "aa",
+                "AAA"
+            ],
+            "negativeExamples": [
+                "!a",
+                "!a",
+                "!!",
+                "!@",
+                "!0",
+                "!!!",
+                "!!a"
+            ],
+            "groundTruth": "not(concat(contain(<m0>),contain(<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "bb",
+                "cc",
+                "de",
+                "ef",
+                "ge",
+                "ze"
+            ],
+            "negativeExamples": [
+                "Aa",
+                "AA",
+                "CC",
+                "DD",
+                "",
+                "E;",
+                "!;"
+            ],
+            "groundTruth": "concat(<low>,contain(contain(<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "A",
+                "B",
+                "b",
+                "a1",
+                "B2",
+                "abc"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "12",
+                "!",
+                ",",
+                "1a"
+            ],
+            "groundTruth": "startwith(or(<let>,<low>))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "!A",
+                "!B",
+                "!a",
+                "!b",
+                "!@a",
+                "!@1"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "b",
+                "1",
+                ",",
+                "!1"
+            ],
+            "groundTruth": "concat(<m0>,contain(or(or(<m1>,<cap>),<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "Aa",
+                "aa",
+                "!,",
+                "B.",
+                "e'",
+                "! "
+            ],
+            "negativeExamples": [
+                "1",
+                "12",
+                ",",
+                ",,,  ",
+                "",
+                " d",
+                "   "
+            ],
+            "groundTruth": "concat(or(or(<m0>,<cap>),<low>),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "abcde!",
+                "abcde!a",
+                "abcde!1",
+                "abCde!!",
+                "abcdef!",
+                "qqqqqqq!123",
+                "qqqqqqqqq!!!"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "!",
+                "abhh!",
+                "ab!abcdef1"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,5),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "normal",
+                "good",
+                "#other",
+                "123",
+                "not staring!",
+                "else !a",
+                "@"
+            ],
+            "negativeExamples": [
+                "!",
+                "!some",
+                "!number123",
+                "!!",
+                "!#",
+                "!AE 123 W",
+                "!cc"
+            ],
+            "groundTruth": "not(startwith(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "aaaaa",
+                "abcde",
+                "bbbbb",
+                "11111",
+                "12345",
+                "abc12",
+                "123456"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "12",
+                "123",
+                "1234"
+            ],
+            "groundTruth": "repeatatleast(or(<low>,<any>),5)"
+        },
+        {
+            "positiveExamples": [
+                "aaaa",
+                "bbbb",
+                "!!!!",
+                "!!!!!",
+                "bbbbb",
+                "aaaaa",
+                "bbbbb12"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "!!",
+                "!!!",
+                "abc",
+                "ab"
+            ],
+            "groundTruth": "repeatatleast(or(startwith(<low>),<m0>),4)"
+        },
+        {
+            "positiveExamples": [
+                "aaab",
+                "abab",
+                "aCc?",
+                "acc,",
+                "zzga",
+                "abc!",
+                "lol~"
+            ],
+            "negativeExamples": [
+                "",
+                "a?a?",
+                "???",
+                "aaa",
+                "lo?l",
+                "ya!y",
+                "   "
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,3),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "123!",
+                "1!",
+                "A!",
+                "B!",
+                "2!",
+                "P!"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "b!",
+                "!!",
+                " !",
+                "  ",
+                "ab"
+            ],
+            "groundTruth": "concat(or(or(<cap>,<vow>),<num>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "!0a",
+                "!100a",
+                "!1000b",
+                "!2c",
+                "!3a",
+                "!!4a",
+                "!!!1a"
+            ],
+            "negativeExamples": [
+                "!0",
+                "!a",
+                "a!",
+                "a0",
+                "0",
+                "a",
+                "!a0"
+            ],
+            "groundTruth": "concat(<m0>,contain(concat(<num>,contain(<any>))))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "ab",
+                "a!",
+                "b!",
+                "1!",
+                "1ab",
+                "1!1"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                " 1",
+                "a2",
+                "a",
+                "A",
+                "123"
+            ],
+            "groundTruth": "contain(or(concat(<any>,contain(<let>)),<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "aB",
+                "aP",
+                "aBaB",
+                "cA",
+                "cuA",
+                "ccU"
+            ],
+            "negativeExamples": [
+                "!a",
+                "BB",
+                "Nosmall",
+                "Veryvery",
+                "!B",
+                "B!",
+                "Bus"
+            ],
+            "groundTruth": "concat(<low>,contain(or(or(<cap>,<m0>),<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "Aa",
+                "Bb",
+                "AAAaaa",
+                "BBBbbb",
+                "Aa and other",
+                "Start with caps",
+                "Hello,"
+            ],
+            "negativeExamples": [
+                "other Aa and",
+                "",
+                "bB",
+                ",,,",
+                "something!",
+                "aA",
+                "n0"
+            ],
+            "groundTruth": "repeatatleast(concat(<cap>,contain(<let>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "abcd",
+                "abcde",
+                "aaaaa",
+                "aaaaaa",
+                "aaaaaaa",
+                "aaaaaaaa",
+                "aaaaaaaaaaa!"
+            ],
+            "negativeExamples": [
+                "fa",
+                "a",
+                "aaa",
+                "",
+                "?4",
+                "??",
+                "?$AAA"
+            ],
+            "groundTruth": "startwith(repeatatleast(<low>,4))"
+        },
+        {
+            "positiveExamples": [
+                "BCDAa",
+                "Ds",
+                "Q23d",
+                "Eg2",
+                "FdFVs",
+                "RE2d4",
+                "Cr2"
+            ],
+            "negativeExamples": [
+                "a",
+                "cc",
+                "1Aw",
+                "fQf",
+                "2A3",
+                "LLL",
+                "K89"
+            ],
+            "groundTruth": "concat(repeatatleast(<cap>,1),contain(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "!!!!",
+                "aaaa",
+                "bbbb",
+                "!!!!!",
+                "bbbbb",
+                "!!!!123",
+                "abcd123"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "!!",
+                "!!!",
+                "abc",
+                "ab"
+            ],
+            "groundTruth": "repeatatleast(startwith(or(<m0>,<let>)),4)"
+        },
+        {
+            "positiveExamples": [
+                "asdfgjkls",
+                "1234567",
+                "12345556",
+                "1232435345",
+                "afdfadsfasdfasd",
+                "adfasdfasfadsfasdf",
+                "afdsafsafadsfadsfasdfadse"
+            ],
+            "negativeExamples": [
+                "a",
+                "aa",
+                "aaa",
+                "aaaa",
+                "aaaaa",
+                "aaaaaa",
+                "34234"
+            ],
+            "groundTruth": "repeatatleast(contain(<any>),7)"
+        },
+        {
+            "positiveExamples": [
+                "1!",
+                "2@",
+                "12!",
+                "543@",
+                "23f!",
+                "7fg@uy",
+                "63r!7rf2"
+            ],
+            "negativeExamples": [
+                "a!",
+                "!!",
+                "@!",
+                "1",
+                "1234",
+                "1b",
+                "1asd23sd"
+            ],
+            "groundTruth": "concat(<num>,contain(or(<m0>,<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "!!!!",
+                "@@@@",
+                "!@!@",
+                "!!@@",
+                "!!!!!",
+                "@@@@@",
+                "@@@!!!"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "!",
+                "!!",
+                "!@!"
+            ],
+            "groundTruth": "repeatatleast(or(<m0>,<m1>),4)"
+        },
+        {
+            "positiveExamples": [
+                "A!f2a",
+                "!",
+                "a",
+                "C23!",
+                "zAzz3U",
+                "z!!32e",
+                "1553I"
+            ],
+            "negativeExamples": [
+                "",
+                "!fj",
+                "!fJ2219",
+                "1ZfaV",
+                "39FF1C",
+                "i293AAc",
+                "U113AAJ"
+            ],
+            "groundTruth": "endwith(or(<m0>,<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "lalala",
+                "kekeke",
+                "oooooo",
+                "sososo",
+                "kukuku",
+                "fifififififififififif",
+                "what is happening right now will this work"
+            ],
+            "negativeExamples": [
+                "kkkkkk",
+                "fofo",
+                "fffooo",
+                "kckckc",
+                "kukuk",
+                "888888",
+                "############"
+            ],
+            "groundTruth": "repeatatleast(concat(<let>,contain(<vow>)),3)"
+        },
+        {
+            "positiveExamples": [
+                "9",
+                "k",
+                "a",
+                "b",
+                "c",
+                "av@c2",
+                "99999"
+            ],
+            "negativeExamples": [
+                "jhgfd",
+                "nbvcx",
+                "rtyu",
+                "fghj",
+                "",
+                "jhgfd",
+                "xcfghjk"
+            ],
+            "groundTruth": "or(endwith(<num>),<low>)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "76543f",
+                "@s",
+                "RgfdE",
+                "dgT5YGq",
+                "45g678",
+                "!d!"
+            ],
+            "negativeExamples": [
+                "!",
+                "12",
+                "1",
+                "4",
+                "GFD2J",
+                "",
+                "!!"
+            ],
+            "groundTruth": "and(contain(<low>),not(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "!S!N!S",
+                "!!!E",
+                "!!eaA",
+                "!S",
+                "abc",
+                "!sS!s",
+                "!s"
+            ],
+            "negativeExamples": [
+                "no",
+                "no!",
+                "s!s!",
+                "everyt!",
+                "123!",
+                "eve!",
+                ""
+            ],
+            "groundTruth": "or(concat(<m0>,contain(<let>)),repeatatleast(<low>,3))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "a",
+                "A",
+                "E",
+                "e",
+                "i",
+                "o"
+            ],
+            "negativeExamples": [
+                "ab",
+                "1",
+                ",",
+                "!a",
+                "ae",
+                "",
+                " "
+            ],
+            "groundTruth": "or(<m0>,<vow>)"
+        },
+        {
+            "positiveExamples": [
+                "Abc\\Def\\Ghi",
+                "Zfw\\Fewfa\\Kwer",
+                "Xreragsdgafawer\\Cfasdwerdfsdf\\Kapworfldsa",
+                "Hifowld\\Asdfa\\Ddfower\\Casowerp\\Aowerp\\Gsdfa",
+                "Fsdower\\Casdfr\\DDaowe\\Kaowerp",
+                "Ionosphere\\Game\\Theory\\Sucks\\Haha",
+                "Crpwpap\\Howerp\\Gsowerp\\Toweripa"
+            ],
+            "negativeExamples": [
+                "Abc",
+                "Abc\\Def\\hijkl",
+                "Tel\\soapw\\Gpfa",
+                "abcd\\efwa\\gowpzr\\kldfkl",
+                "t",
+                "agowp\\Aowerip\\C023123",
+                "a2kf\\Cworp\\Tawoer"
+            ],
+            "groundTruth": "repeatatleast(startwith(<cap>),3)"
+        },
+        {
+            "positiveExamples": [
+                "a0",
+                "!b1",
+                "a100",
+                "b1000",
+                "aa1000",
+                "ab0",
+                "ab1"
+            ],
+            "negativeExamples": [
+                "0",
+                "",
+                "1",
+                "100",
+                "1a",
+                "2b",
+                "3c"
+            ],
+            "groundTruth": "endwith(concat(<low>,contain(<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "!!!!!!!",
+                "!!!!!!!!",
+                "aaaaaaaa",
+                "aaaaaaa",
+                "a!e!iou!",
+                "aeiou!!",
+                "AEIOU!ae"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "!!!!!!",
+                "aeioua",
+                "AEIOU!"
+            ],
+            "groundTruth": "repeatatleast(or(<vow>,<m0>),7)"
+        },
+        {
+            "positiveExamples": [
+                "aaaaaa",
+                "AAAAAA",
+                "aaaaaaa",
+                "AAAAAAA",
+                "aaaAAA",
+                "aaaAAAA",
+                "bbbbbbb"
+            ],
+            "negativeExamples": [
+                "1",
+                "a",
+                "b",
+                "@",
+                ",",
+                "123",
+                "abc"
+            ],
+            "groundTruth": "repeatatleast(or(<let>,<low>),6)"
+        },
+        {
+            "positiveExamples": [
+                "1a!",
+                ",e!",
+                "bi!",
+                " o!",
+                "     aeiou!",
+                "b1a1!",
+                "ba11!3"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "b",
+                "be",
+                "bi",
+                "aT!"
+            ],
+            "groundTruth": "contain(concat(concat(<any>,contain(<vow>)),contain(<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "this will work!",
+                "##$@234523adfFEAa!",
+                "b;lkjereadf!56",
+                "nothign here!fg7!",
+                "Why not!",
+                "WEREk!"
+            ],
+            "negativeExamples": [
+                "!",
+                "",
+                "F32423!",
+                "%!",
+                "0!",
+                "K!",
+                "LKJ::LKJK:IO!"
+            ],
+            "groundTruth": "endwith(repeatatleast(concat(<low>,contain(<m0>)),1))"
+        },
+        {
+            "positiveExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "b",
+                "#",
+                ","
+            ],
+            "negativeExamples": [
+                "!",
+                "@",
+                "!@",
+                "a!",
+                "!a",
+                "!b",
+                "@b"
+            ],
+            "groundTruth": "not(contain(or(<m0>,<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "a1!",
+                "ab!",
+                "ab,,,  !!",
+                "df!",
+                "df   !",
+                "Alice!"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "ab",
+                "df",
+                "@@@",
+                ",Abd"
+            ],
+            "groundTruth": "startwith(endwith(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "A",
+                "Capital",
+                "!C",
+                "#i#",
+                "some thing",
+                "12 has c 3##",
+                "!@ T"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "contain(or(<any>,<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "a",
+                "!",
+                "u and something",
+                "! and ##",
+                "e plus PLUS",
+                "! N!"
+            ],
+            "negativeExamples": [
+                "",
+                "not",
+                "#others",
+                "123",
+                "start a !",
+                "before ! and",
+                "@bla"
+            ],
+            "groundTruth": "startwith(or(<vow>,<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "!u",
+                "!!ajflakdsjf",
+                "!dsaklfj",
+                "!ikk???",
+                "aeio",
+                "aeiou",
+                "!"
+            ],
+            "negativeExamples": [
+                "200",
+                "-2",
+                "ae",
+                "aei",
+                "aeuk",
+                "ssssss",
+                "***"
+            ],
+            "groundTruth": "or(repeatatleast(<vow>,4),startwith(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a4",
+                "a992388ew",
+                "u5",
+                "o1",
+                "i5",
+                "we9w",
+                "a5oo2"
+            ],
+            "negativeExamples": [
+                "s1",
+                "5",
+                "tik",
+                "",
+                "too",
+                "slackvariabl ",
+                "slack variable"
+            ],
+            "groundTruth": "contain(concat(<vow>,contain(<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "ab",
+                "aA",
+                "a1",
+                "a!",
+                "b ",
+                "b1dfefe"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "A",
+                "A ",
+                "AB",
+                "A1"
+            ],
+            "groundTruth": "concat(and(<let>,<low>),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "b",
+                "ab",
+                "1a",
+                "1ab",
+                "!ab",
+                "!b"
+            ],
+            "negativeExamples": [
+                " ",
+                "12",
+                "12a12",
+                "abc12",
+                "abc1",
+                "!,,",
+                "ab!!"
+            ],
+            "groundTruth": "star(endwith(<let>))"
+        },
+        {
+            "positiveExamples": [
+                "aC",
+                "tZWa",
+                "a!",
+                "aC!",
+                "aC",
+                "ed!sd",
+                "oJs!"
+            ],
+            "negativeExamples": [
+                "B",
+                "BA",
+                "21",
+                "B61",
+                "B64S",
+                "BMB!s",
+                "B!B12"
+            ],
+            "groundTruth": "concat(<low>,contain(or(<any>,<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "b",
+                "e",
+                "o",
+                "u",
+                "1",
+                "CABB1CCD"
+            ],
+            "negativeExamples": [
+                "B",
+                "",
+                ",",
+                "'",
+                "!",
+                "&",
+                ""
+            ],
+            "groundTruth": "contain(or(or(<low>,<vow>),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "aaa",
+                "bBA",
+                "aaaaaaaaaaaaaaaaaaaaaaAaaaaaghjaytr",
+                "bBbbbbbbbbbbbbbbbbbbb56i6",
+                "baba",
+                "bfkdjfkdeibidfdasdre",
+                "here i am"
+            ],
+            "negativeExamples": [
+                "",
+                "aa",
+                "ee",
+                "ce",
+                "#@a",
+                "!!o",
+                "fff"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,2),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "abc",
+                "aeiou",
+                "bcd",
+                "123",
+                "a12",
+                "!!!",
+                "abc123"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "b",
+                "A",
+                "12"
+            ],
+            "groundTruth": "repeatatleast(or(<vow>,<any>),3)"
+        },
+        {
+            "positiveExamples": [
+                "!#",
+                "@#",
+                "A#",
+                "!#",
+                "B#",
+                "C#",
+                "D#"
+            ],
+            "negativeExamples": [
+                "!",
+                "#",
+                "c#",
+                "@",
+                "1@",
+                "2@",
+                "1#"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<m1>),<cap>),contain(<m2>))"
+        },
+        {
+            "positiveExamples": [
+                "",
+                "!",
+                "@",
+                "!!",
+                "@@",
+                "!@",
+                "!!!"
+            ],
+            "negativeExamples": [
+                "a",
+                "b",
+                "0",
+                "1",
+                "c",
+                "2",
+                "3"
+            ],
+            "groundTruth": "not(or(or(<vow>,<num>),<let>))"
+        },
+        {
+            "positiveExamples": [
+                "aaaaa6",
+                "aaaaaa7",
+                "1bbbbb8",
+                "bbbbbb10",
+                "ccccccccccccc8",
+                "aaaaa9",
+                "bcdefg123456"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "ab12",
+                "abc12",
+                "abcd666",
+                "abcd9999"
+            ],
+            "groundTruth": "contain(repeatatleast(<low>,5))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "A",
+                "aa",
+                "AA",
+                "aA",
+                "Aa",
+                "a0"
+            ],
+            "negativeExamples": [
+                "0",
+                "00",
+                "0a",
+                "0!",
+                "!",
+                "!0",
+                "@"
+            ],
+            "groundTruth": "startwith(or(<low>,<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "a@",
+                "e@",
+                "A@",
+                "!34@56",
+                "b123@45",
+                "ba@",
+                "bb@"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "!",
+                "b",
+                "B@",
+                "1@"
+            ],
+            "groundTruth": "concat(or(or(<vow>,<m0>),<low>),contain(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "aA",
+                "bR",
+                "b12A",
+                "o1",
+                "o,",
+                "o ",
+                "abdcedA0"
+            ],
+            "negativeExamples": [
+                "1A",
+                ",B",
+                ",,",
+                " ",
+                " .",
+                "6ABd3",
+                ""
+            ],
+            "groundTruth": "concat(<low>,contain(or(<cap>,<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "bBcaDDaff1223f",
+                "BBcdswf!942",
+                "zfZdkaCOgg23A",
+                "XfdaPPweA231cc",
+                "KKsdaCVSSD9923",
+                "APPCweQCC831",
+                "kasowAVKLL12931"
+            ],
+            "negativeExamples": [
+                "",
+                "avowDZ",
+                "EfwkeUUUald",
+                "Gwieuaks!!@",
+                "J",
+                "c",
+                "csjhd2"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,7),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "1@",
+                "a",
+                "!a",
+                "a!",
+                "!12",
+                "@!2"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "@",
+                "@@@",
+                "$%^",
+                "####",
+                "##"
+            ],
+            "groundTruth": "contain(or(or(<m0>,<let>),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "asd",
+                "aedtf",
+                "7as",
+                "875!s",
+                "goo",
+                "doog"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "startwith(or(or(<any>,<cap>),<let>))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "a!",
+                "a",
+                "!!a",
+                "!!!!a",
+                "!a!a",
+                "!a!b"
+            ],
+            "negativeExamples": [
+                "!A",
+                "Anything with caps",
+                "",
+                "A!",
+                "1!",
+                "!1",
+                "a!A"
+            ],
+            "groundTruth": "repeatatleast(or(<m0>,<low>),1)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "e",
+                "1",
+                "!2!",
+                "@A",
+                "B",
+                "a1"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                ",",
+                ";;",
+                "!!",
+                "  !  "
+            ],
+            "groundTruth": "contain(or(or(<vow>,<num>),<let>))"
+        },
+        {
+            "positiveExamples": [
+                "!234",
+                "!4a",
+                "!6rbb",
+                "!8abcd",
+                "!9jjt",
+                "!076432",
+                "!5"
+            ],
+            "negativeExamples": [
+                "1",
+                "q",
+                "abc",
+                "234",
+                "6rbb",
+                "%td",
+                "#er2"
+            ],
+            "groundTruth": "concat(<m0>,contain(and(<num>,<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "!1",
+                "!A",
+                "!B",
+                "!,",
+                "!!",
+                "!43ad"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "a",
+                "1",
+                "b",
+                "A"
+            ],
+            "groundTruth": "concat(<m0>,contain(or(<any>,<cap>)))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "aaa",
+                "aaaa",
+                "aaaaa",
+                "aaaaaa",
+                "aaaaaaa",
+                "aaaaaaaa"
+            ],
+            "negativeExamples": [
+                "@a",
+                "@b",
+                "!a",
+                "Aa",
+                "0a",
+                "1a",
+                "A"
+            ],
+            "groundTruth": "star(concat(<low>,contain(<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "12A",
+                "dsge",
+                "dI",
+                "@o",
+                "!jgU",
+                "$#!fO"
+            ],
+            "negativeExamples": [
+                "!q",
+                "aR",
+                "12n",
+                "23",
+                "t3d",
+                "w2",
+                "qwb"
+            ],
+            "groundTruth": "concat(or(<m0>,<any>),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "3a",
+                "2,",
+                "a2,",
+                "aaa3a",
+                "nobody33a33",
+                "when2a",
+                "nope2!"
+            ],
+            "negativeExamples": [
+                "a2",
+                "2",
+                "aaaa",
+                "",
+                ",",
+                ",a",
+                "yes"
+            ],
+            "groundTruth": "endwith(concat(<num>,contain(<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "2D",
+                "ae",
+                "4",
+                "fe4G",
+                "123",
+                "!!f^",
+                "ds"
+            ],
+            "negativeExamples": [
+                "s",
+                "G",
+                "a",
+                "!",
+                "@#",
+                "",
+                "e"
+            ],
+            "groundTruth": "or(concat(<any>,contain(<let>)),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "aa",
+                "1!",
+                "1a",
+                "1b",
+                "1b1",
+                "1bbb"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "b",
+                "!",
+                "a1"
+            ],
+            "groundTruth": "concat(<any>,contain(or(<let>,<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "aA",
+                "bA",
+                "bAA",
+                "bAB",
+                "aAAA",
+                "aBBB",
+                "bBB"
+            ],
+            "negativeExamples": [
+                "a",
+                "b",
+                "1",
+                "2",
+                "aa",
+                "AA",
+                " "
+            ],
+            "groundTruth": "star(concat(<low>,contain(<cap>)))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "e!",
+                "i1",
+                "o2",
+                "u23",
+                "a12!",
+                "aeo2"
+            ],
+            "negativeExamples": [
+                "a",
+                "e",
+                "1",
+                "2",
+                "aa",
+                "ABC",
+                "AB."
+            ],
+            "groundTruth": "concat(<vow>,contain(or(<m0>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "cAA1!",
+                "@AAA",
+                "2abAaZ",
+                "3ac!!",
+                "!347AA",
+                "555@@aa",
+                ""
+            ],
+            "negativeExamples": [
+                "Ai2ZZFF23",
+                "e2GGasd",
+                "IIII",
+                "o",
+                "Udfa",
+                "Eaf",
+                "u92!!f"
+            ],
+            "groundTruth": "not(startwith(or(<cap>,<vow>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "A",
+                "!",
+                "e",
+                "G",
+                "y",
+                "q"
+            ],
+            "negativeExamples": [
+                "!!",
+                "aa",
+                "Aa",
+                "dS",
+                "",
+                "12",
+                "3"
+            ],
+            "groundTruth": "or(or(<m0>,<low>),<let>)"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "!!",
+                "!kl",
+                "!;'",
+                "!Zz",
+                "!?.~",
+                "!!!"
+            ],
+            "negativeExamples": [
+                "",
+                "a!",
+                "1!",
+                ";!!",
+                "m!",
+                "z!",
+                "007"
+            ],
+            "groundTruth": "concat(<m0>,contain(contain(<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "!!!!!!!!!",
+                "!!!!!!here",
+                "!!!!!!!!!!!!!!what about now",
+                "!!!!!!!!!$#@#%",
+                "!!!!!!!!!aFe35#",
+                "!!!!!!fS3DC#%",
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            ],
+            "negativeExamples": [
+                "!",
+                "",
+                "!!!!!",
+                "!Why!doesnt!this!work!because!I!think!it!should",
+                "nothing here",
+                "!@$#@@#!!$#@#@$!#%@!#@Eer3234!",
+                "Done !"
+            ],
+            "groundTruth": "startwith(repeatatleast(<m0>,6))"
+        },
+        {
+            "positiveExamples": [
+                "Fake",
+                "Nope",
+                "Not sure",
+                "I think this will work",
+                "S8",
+                "E%",
+                "M."
+            ],
+            "negativeExamples": [
+                "S",
+                "",
+                "about",
+                "%S",
+                "(L",
+                "fore#F",
+                "foreF#"
+            ],
+            "groundTruth": "repeatatleast(startwith(concat(<cap>,contain(<any>))),1)"
+        },
+        {
+            "positiveExamples": [
+                "!a!a!a!a",
+                "!f@32!c!fj23!kfls!wor!",
+                "!cc!dkw!map!fo234!0ri2op!pfAA!fla",
+                "!c!1!@!A!Z!",
+                "!ff!23A!ffC!ga!f!",
+                "!CC!ff23!ppr1!f!q!",
+                "!A!ccf!pw3!o!dd!g!"
+            ],
+            "negativeExamples": [
+                "!f",
+                "!1F!C!fSdf",
+                "dfh2123@@",
+                "!rj!aowe!CC",
+                "!!",
+                "",
+                "!C!!fj!"
+            ],
+            "groundTruth": "repeatatleast(concat(<m0>,contain(<any>)),4)"
+        },
+        {
+            "positiveExamples": [
+                "!a1",
+                "!11",
+                "!1111111",
+                "!f12!",
+                "!bbbbb!!!!111",
+                "!b2",
+                "!c23"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "!",
+                "!aa",
+                "!!!a"
+            ],
+            "groundTruth": "concat(concat(<m0>,contain(<any>)),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "1a",
+                "aa",
+                "ba",
+                "bb",
+                "bc1",
+                "!aa",
+                "!aab1"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "a1",
+                "b!",
+                "c.",
+                "11"
+            ],
+            "groundTruth": "concat(startwith(<any>),contain(<let>))"
+        },
+        {
+            "positiveExamples": [
+                "A!",
+                "E!",
+                "Iq!",
+                "O3!",
+                "Ad!d",
+                "A1!e3",
+                "U2!d"
+            ],
+            "negativeExamples": [
+                "\u001bAA",
+                "!",
+                "C",
+                "Ca!",
+                "CC",
+                "F2!",
+                "a!"
+            ],
+            "groundTruth": "concat(and(<vow>,<cap>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a!A",
+                "aa!B",
+                "a!!C",
+                "a~!Da",
+                "a!Aa",
+                "aA!cA",
+                "z!@A"
+            ],
+            "negativeExamples": [
+                "a!",
+                "!",
+                "!C",
+                "a~",
+                "C!",
+                "Zz!",
+                "a!a"
+            ],
+            "groundTruth": "concat(concat(<low>,contain(<m0>)),contain(<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "aC",
+                "a C",
+                "a char 1",
+                "www a char",
+                "!!! e c",
+                "e c 123",
+                "2 @ i L"
+            ],
+            "negativeExamples": [
+                "123",
+                "###",
+                "",
+                "B c",
+                "a",
+                "ch a",
+                "!! e"
+            ],
+            "groundTruth": "contain(concat(<vow>,contain(<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "it!",
+                "fjkdal;f!dsfasf",
+                "dafsj!sdajkl;fj!sdf",
+                "a!!!!",
+                "lines containing the string \"!\" with a letter before it",
+                "ok??ok!!",
+                "pikachu!!"
+            ],
+            "negativeExamples": [
+                "!!!",
+                "?%!",
+                "?",
+                "afdkls;?",
+                "",
+                "!!ak",
+                "--!--"
+            ],
+            "groundTruth": "concat(<let>,contain(contain(<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "1A",
+                "345F",
+                "1asRbr",
+                "",
+                "1dF4sD4fsdTgd3F",
+                "4g3F5f2H6d3E",
+                "6fE45"
+            ],
+            "negativeExamples": [
+                "A",
+                "1",
+                "h",
+                "6fgj",
+                "8g6cg98gh",
+                "A3467",
+                "NBGFD13"
+            ],
+            "groundTruth": "star(concat(<num>,contain(<cap>)))"
+        },
+        {
+            "positiveExamples": [
+                "000000",
+                "0000000",
+                "aaaaaa",
+                "aaaaaaa",
+                "a0a0a0",
+                "a0a0a0a",
+                "1111111"
+            ],
+            "negativeExamples": [
+                "",
+                "0",
+                "a",
+                "00",
+                "aa",
+                "000",
+                "aaa"
+            ],
+            "groundTruth": "repeatatleast(or(<num>,<vow>),6)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "C",
+                "Q",
+                "1",
+                "@",
+                "O",
+                "P"
+            ],
+            "negativeExamples": [
+                "12",
+                "",
+                "ac",
+                "CD",
+                "4D",
+                "@#",
+                "d1D"
+            ],
+            "groundTruth": "or(<cap>,<any>)"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "a@",
+                "ab@",
+                "12#",
+                "1",
+                "Ab@",
+                "Ab,!@"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "or(contain(<any>),concat(<m0>,contain(<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "aaA",
+                "a!B",
+                "b;G",
+                "k2$M",
+                "u,3N",
+                "p4A5N",
+                "asS"
+            ],
+            "negativeExamples": [
+                "Asq",
+                "b;8",
+                "c`a",
+                "z!'",
+                "zZz",
+                "Zz<",
+                "`kk"
+            ],
+            "groundTruth": "concat(concat(<low>,contain(<any>)),contain(<cap>))"
+        },
+        {
+            "positiveExamples": [
+                ";a",
+                "1a",
+                "@k",
+                "*m",
+                "(p",
+                "'z",
+                "[m"
+            ],
+            "negativeExamples": [
+                "",
+                ";A",
+                "mM",
+                "kM",
+                "NP",
+                "!P",
+                "Z"
+            ],
+            "groundTruth": "concat(<any>,contain(and(<let>,<low>)))"
+        },
+        {
+            "positiveExamples": [
+                "!A",
+                "!bA",
+                "!bAc",
+                "a!A",
+                "1!B",
+                "!Ab",
+                "!!!!B"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "!",
+                "!a",
+                "!1"
+            ],
+            "groundTruth": "concat(endwith(<m0>),contain(contain(<cap>)))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "aa!",
+                "b!",
+                "testo",
+                "roberto",
+                "fake",
+                "fakE"
+            ],
+            "negativeExamples": [
+                "testing",
+                "no more tests",
+                "Will no9",
+                "Will work?",
+                "Not likely%",
+                "How's this",
+                "working well"
+            ],
+            "groundTruth": "endwith(or(and(<let>,<vow>),<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "A",
+                "1",
+                "@",
+                "e",
+                "I",
+                "0"
+            ],
+            "negativeExamples": [
+                "aa",
+                "Ae",
+                "!as",
+                "",
+                "r3",
+                "Lkd",
+                "s3d"
+            ],
+            "groundTruth": "or(or(<vow>,<low>),<any>)"
+        },
+        {
+            "positiveExamples": [
+                "A!",
+                "B1",
+                "C@",
+                "AB!",
+                "CD2",
+                "ABC!23",
+                "A!a"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "ab",
+                "12",
+                "1",
+                "@",
+                "Aa"
+            ],
+            "groundTruth": "concat(<cap>,contain(or(or(<m0>,<num>),<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "a1",
+                "!1",
+                "@1",
+                "11",
+                ",1",
+                "b2",
+                "b22"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "!",
+                "@",
+                "aa"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<any>),<m1>),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "abcdk",
+                "!",
+                "!a",
+                "!fasf",
+                "jfkla;fj",
+                "afjkdlasfjs",
+                "afasdlk;fjkasd;jfkl"
+            ],
+            "negativeExamples": [
+                "?asfd",
+                "?",
+                "a",
+                "aa",
+                "aaa",
+                "a",
+                "stk"
+            ],
+            "groundTruth": "startwith(or(repeatatleast(<let>,4),<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "@",
+                "!!",
+                "@@",
+                "!@",
+                "!@!",
+                "@!!@"
+            ],
+            "negativeExamples": [
+                "other",
+                "123",
+                "",
+                "character",
+                "##",
+                "# ! mixed",
+                "mix @ 66"
+            ],
+            "groundTruth": "repeatatleast(or(<m0>,<m1>),1)"
+        },
+        {
+            "positiveExamples": [
+                "z!",
+                "zZ",
+                "aZj",
+                "z!gjf",
+                "hCCd",
+                "jWa",
+                "mAeg42"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "!",
+                "!sd",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "startwith(or(concat(<low>,contain(<m0>)),<let>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "@",
+                "1",
+                "!@",
+                "!1",
+                "@!a",
+                "a@2"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "b",
+                "A",
+                "B",
+                "ab"
+            ],
+            "groundTruth": "contain(or(or(<m0>,<m1>),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "a!!!!!",
+                "ab!!!!!!",
+                "~!!!!!!!!",
+                "a!!!!!!!!",
+                ";!!!!!!!!!!!!!!",
+                "abc1~!3452!!!!!",
+                "!!!!!!"
+            ],
+            "negativeExamples": [
+                "!!!!!",
+                "abcd",
+                "!qbc",
+                "a!!!!",
+                "b!!!",
+                "?!!",
+                "a!"
+            ],
+            "groundTruth": "concat(<any>,contain(repeatatleast(<m0>,5)))"
+        },
+        {
+            "positiveExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "negativeExamples": [
+                "a",
+                "e",
+                "b",
+                "A",
+                "W",
+                "1",
+                "@"
+            ],
+            "groundTruth": "not(or(or(<any>,<vow>),<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "words5",
+                "a",
+                "64",
+                "128",
+                "abc?",
+                "888",
+                "333"
+            ],
+            "negativeExamples": [
+                "-200",
+                "*",
+                "",
+                "!",
+                "@",
+                "#",
+                "$"
+            ],
+            "groundTruth": "startwith(or(<num>,<let>))"
+        },
+        {
+            "positiveExamples": [
+                "1a",
+                "aa",
+                "!a",
+                "2,,,",
+                "2    ",
+                "d$$$",
+                "!###"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "!",
+                "A",
+                "A2"
+            ],
+            "groundTruth": "concat(or(or(<num>,<low>),<m0>),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "test!",
+                "testing !@",
+                "test@",
+                "test!Now!",
+                "test@here@",
+                "now!once@",
+                "plese!"
+            ],
+            "negativeExamples": [
+                "forking",
+                "threads",
+                "",
+                "don't have any",
+                "no more",
+                "34324f#$@",
+                "core$%008"
+            ],
+            "groundTruth": "concat(<low>,contain(repeatatleast(or(<m0>,<m1>),1)))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "!e",
+                "!i",
+                "!o",
+                "!u",
+                "!a234absdfsdf",
+                "!yuZXFHSDjf19231923"
+            ],
+            "negativeExamples": [
+                "!123",
+                "!ttrrpw",
+                "!zzccddbb",
+                "a",
+                "123",
+                "",
+                "f3fsdfwr"
+            ],
+            "groundTruth": "repeatatleast(startwith(concat(<m0>,contain(<vow>))),1)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "1",
+                "2",
+                "f",
+                "S",
+                "$",
+                "V"
+            ],
+            "negativeExamples": [
+                "12",
+                "ab",
+                "1a",
+                "b3",
+                "##",
+                "sdf",
+                "23ef4"
+            ],
+            "groundTruth": "or(<num>,<any>)"
+        },
+        {
+            "positiveExamples": [
+                "h",
+                "H",
+                "hello",
+                "Hello",
+                "hellO",
+                "words",
+                "cool"
+            ],
+            "negativeExamples": [
+                "hello!",
+                "",
+                ",,,",
+                "HELLO!",
+                "tre,llo",
+                "you're",
+                "012"
+            ],
+            "groundTruth": "repeatatleast(or(<let>,<cap>),1)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "aa",
+                "aaa",
+                "aaaa",
+                "aaaaa",
+                "aaaaaaa",
+                "aaaaaaaaaa"
+            ],
+            "negativeExamples": [
+                "0",
+                "1",
+                "2",
+                "4k",
+                "56k",
+                "0z",
+                "0000"
+            ],
+            "groundTruth": "and(not(<num>),star(<let>))"
+        },
+        {
+            "positiveExamples": [
+                "abcdefg",
+                "ABCDEFG",
+                "reGREte",
+                "ghjklfgh",
+                "HGFDkjhgG",
+                "tGFDdgff",
+                "HGFdfhgfd"
+            ],
+            "negativeExamples": [
+                "abcdef",
+                "ABCDEF",
+                "avDFG",
+                "123457",
+                "1234567",
+                "ab1hgfD",
+                "hgfd 3s"
+            ],
+            "groundTruth": "repeatatleast(<let>,7)"
+        },
+        {
+            "positiveExamples": [
+                "aaaaaa",
+                "aeioua",
+                "AEIOUa",
+                "111111",
+                "abcdef",
+                "abc123",
+                "abcdef123"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "12",
+                "123",
+                "1345"
+            ],
+            "groundTruth": "repeatatleast(or(<vow>,<any>),6)"
+        },
+        {
+            "positiveExamples": [
+                "!!!!bumber",
+                "!!!!!123",
+                "!!!!!!!",
+                "!!!!",
+                "!!!!a",
+                "!!asd!!!!",
+                "!any!any!a!!asd"
+            ],
+            "negativeExamples": [
+                "!wow",
+                "!!wow",
+                "77!!!ok",
+                "",
+                "four!s",
+                "fi!!v",
+                "Sid!sd!sd1!"
+            ],
+            "groundTruth": "repeatatleast(startwith(<m0>),4)"
+        },
+        {
+            "positiveExamples": [
+                "AAAAAa",
+                "BBBBBa",
+                "BBBBBBe",
+                "BBBBBoui",
+                "ABCDEFGA",
+                "ABCDEe",
+                "ABCDEFGa"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "A",
+                "a",
+                "1",
+                "AA",
+                "AAA"
+            ],
+            "groundTruth": "concat(repeatatleast(<cap>,5),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "@",
+                "1a",
+                "@!",
+                "@!a",
+                "123",
+                ""
+            ],
+            "negativeExamples": [
+                "a",
+                "!",
+                "abc",
+                "a1",
+                "!a",
+                "!1",
+                "!!!!"
+            ],
+            "groundTruth": "not(startwith(or(<let>,<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "Ad",
+                "Vdfgd",
+                "Swerfds",
+                "asEf",
+                "1234Fsdf",
+                "sdf3dSdf",
+                "AsAsA1"
+            ],
+            "negativeExamples": [
+                "a",
+                "A",
+                "w",
+                "werS",
+                "sd234ds",
+                "S1234",
+                ""
+            ],
+            "groundTruth": "contain(concat(<cap>,contain(<low>)))"
+        },
+        {
+            "positiveExamples": [
+                "ab",
+                "a,",
+                "eb",
+                "e,",
+                "aeiou",
+                "a,e",
+                "eeeeeee"
+            ],
+            "negativeExamples": [
+                "reeeeeee",
+                "",
+                "hHllH",
+                ",,,",
+                "yyy!",
+                "y",
+                "no"
+            ],
+            "groundTruth": "concat(<vow>,contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "!#",
+                "!1",
+                "a!@",
+                "b!#",
+                "c!2",
+                "  !@#"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "@",
+                "#",
+                "1",
+                "@!b",
+                "!"
+            ],
+            "groundTruth": "concat(endwith(<m0>),contain(or(or(<m1>,<m2>),<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "s",
+                "1",
+                "!",
+                "sd1",
+                "fd3",
+                "d!",
+                "s3a"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "endwith(or(repeatatleast(<any>,1),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "aC",
+                "zasDds",
+                "y123DAAAds",
+                "c2Gs23",
+                "pa12G23",
+                "rV",
+                "tZasZ"
+            ],
+            "negativeExamples": [
+                "",
+                "abc",
+                "!!23abc",
+                "a#2! fff",
+                "g123f22",
+                "A",
+                "Z"
+            ],
+            "groundTruth": "concat(<let>,contain(contain(<cap>)))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "a!bc",
+                "1!3b",
+                "Dddd!!!!123",
+                "!!!",
+                "2!eE!jde",
+                "1!76!!de!"
+            ],
+            "negativeExamples": [
+                "@",
+                "@",
+                "@",
+                "@",
+                "@",
+                "@",
+                "@"
+            ],
+            "groundTruth": "or(repeatatleast(<m0>,1),not(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "A0",
+                "A00",
+                "A1",
+                "AA1",
+                "AAA000",
+                "AAA100",
+                "AA999"
+            ],
+            "negativeExamples": [
+                "",
+                "a",
+                "0",
+                "a0",
+                "aa0",
+                "aa00",
+                "aaa000"
+            ],
+            "groundTruth": "concat(<cap>,contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "e",
+                "ghj",
+                "anythin",
+                "132fsd",
+                "jsd&s",
+                "eAe",
+                "hoadfan"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "contain(or(or(<vow>,<any>),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "!5l",
+                "!@",
+                "!ltter",
+                "!a",
+                "!@@",
+                "!ak@",
+                "!fikg"
+            ],
+            "negativeExamples": [
+                "asdflk",
+                "a!",
+                "5!",
+                "@!",
+                "letter",
+                "&",
+                "a!5l"
+            ],
+            "groundTruth": "concat(<m0>,contain(or(or(<num>,<m1>),<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "a7",
+                "e1!",
+                "!i8",
+                "o0",
+                "u5",
+                "uu6",
+                "ii1"
+            ],
+            "negativeExamples": [
+                "jinwmf",
+                "wofjwoifj",
+                "ijfowjf",
+                "",
+                "hate",
+                "machien",
+                "learning"
+            ],
+            "groundTruth": "contain(concat(<vow>,contain(<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "yay!",
+                "yay@",
+                "yay I'm happy!",
+                "yay I'm happy@",
+                "!@!",
+                "@!@",
+                "!"
+            ],
+            "negativeExamples": [
+                "yay! I'm happy",
+                "",
+                "!aaa",
+                "@aaa",
+                "something with no symbols",
+                "!!!@@@ending",
+                "!@!a"
+            ],
+            "groundTruth": "endwith(or(<m0>,<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "!aA",
+                "!bF",
+                "!cF",
+                "!tF",
+                "!rH",
+                "!gJ",
+                "!vF"
+            ],
+            "negativeExamples": [
+                "!Aa",
+                "!BFf",
+                "!235",
+                "!h",
+                "!JK",
+                "123",
+                "aFe"
+            ],
+            "groundTruth": "concat(<m0>,contain(concat(<low>,contain(<cap>))))"
+        },
+        {
+            "positiveExamples": [
+                "A",
+                "ZaC",
+                "X!!",
+                "X@@123C",
+                "AA",
+                "CCDD",
+                "C1G3X5"
+            ],
+            "negativeExamples": [
+                "",
+                "1CD",
+                "aA@C",
+                "!sacA",
+                "f!ACCGG",
+                "9914AAACC",
+                "29f21"
+            ],
+            "groundTruth": "repeatatleast(startwith(<cap>),1)"
+        },
+        {
+            "positiveExamples": [
+                "",
+                " ",
+                "1",
+                "!",
+                "@",
+                "2",
+                "1234"
+            ],
+            "negativeExamples": [
+                "a",
+                "b",
+                "A",
+                "B",
+                "AB",
+                "a",
+                "B"
+            ],
+            "groundTruth": "not(repeatatleast(<let>,1))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "1",
+                ",",
+                "ab",
+                "a12",
+                "a',",
+                " "
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "contain(or(<low>,<any>))"
+        },
+        {
+            "positiveExamples": [
+                "abcde",
+                "abcdef",
+                "aeiou",
+                "aeioua",
+                "AEIOU",
+                "ABcde",
+                "ABcdeF"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "A",
+                "!",
+                "ab"
+            ],
+            "groundTruth": "repeatatleast(or(<vow>,<let>),5)"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "a!@",
+                "!@e",
+                "!#",
+                "a!#",
+                "!#a",
+                "!@#"
+            ],
+            "negativeExamples": [
+                "",
+                "a",
+                "abc",
+                ",,,",
+                "!nooo",
+                "@",
+                "fake"
+            ],
+            "groundTruth": "contain(or(concat(<m0>,contain(<m1>)),<m2>))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "a!d!@",
+                "111!2@",
+                "!!!@",
+                "gfd!gf34!@@",
+                "df!@",
+                "ws12!4d@"
+            ],
+            "negativeExamples": [
+                "@",
+                "!",
+                "abc@",
+                "!bvcx34",
+                "123@",
+                "!093v",
+                "d!tr!tre!"
+            ],
+            "groundTruth": "concat(repeatatleast(endwith(<m0>),1),contain(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "aj!",
+                "Bad!",
+                "SOMSOM4!ab",
+                "aSS345!67",
+                "sd3Aqw!",
+                "jdSS!",
+                "Saq!"
+            ],
+            "negativeExamples": [
+                "a",
+                "31f",
+                "sd9",
+                "",
+                "daj8",
+                "sdd3",
+                "sd"
+            ],
+            "groundTruth": "concat(star(<cap>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "12",
+                "Aa",
+                "abA",
+                "!",
+                "!!",
+                "1A!b"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "A",
+                "AB",
+                "@",
+                "$",
+                "DF"
+            ],
+            "groundTruth": "contain(or(or(<num>,<low>),<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a 123",
+                "a1",
+                "Letter 2 #",
+                "c 5",
+                "d 7 !#",
+                "PCP b 33",
+                "x32"
+            ],
+            "negativeExamples": [
+                "No numeral",
+                "###",
+                "123",
+                "567 plus a",
+                "items",
+                "a character",
+                "!! 47"
+            ],
+            "groundTruth": "concat(and(<let>,<any>),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "@",
+                "a!",
+                "@1",
+                "@a",
+                "e!a",
+                "e!@",
+                "@gggg"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "b",
+                "a",
+                "a2",
+                "ab"
+            ],
+            "groundTruth": "or(concat(<vow>,contain(<m0>)),startwith(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "!!e",
+                "!A",
+                "!AEO",
+                "!aEi",
+                "!abbbb",
+                "!!!ae"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "2",
+                "12",
+                "b",
+                "!b"
+            ],
+            "groundTruth": "concat(star(<m0>),contain(contain(<vow>)))"
+        },
+        {
+            "positiveExamples": [
+                "1a",
+                "2a",
+                "ba",
+                "!a",
+                "1aaa",
+                "234aeiou",
+                "!23a"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "at",
+                "1t",
+                "!t"
+            ],
+            "groundTruth": "repeatatleast(concat(<any>,contain(<vow>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "1!1",
+                "23!a",
+                "45!abc",
+                "45! K",
+                "09! 23",
+                "8 !h",
+                "9 !12"
+            ],
+            "negativeExamples": [
+                "noNumber!",
+                "onlyNumber123!",
+                "!has character",
+                "! abc!abc",
+                "##!",
+                "abc ! ##",
+                "no e"
+            ],
+            "groundTruth": "concat(<num>,contain(and(<m0>,<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                " !",
+                "jfo123!AA",
+                "!aZfja",
+                "ac@@!Afai12",
+                "rw!!Jf23",
+                "9fj!ffAz"
+            ],
+            "negativeExamples": [
+                "",
+                "A",
+                "123fasdA",
+                "jfZxZ",
+                "12Ufka",
+                "k123A2",
+                "4C"
+            ],
+            "groundTruth": "concat(not(<cap>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "1A1A",
+                "12A1A",
+                "12A12A",
+                "0345BDE1A",
+                "1A2B3C",
+                "12A23B33DD",
+                "1A2B3C4D"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1A",
+                "1a",
+                "a1",
+                "1A2b",
+                "2b1A"
+            ],
+            "groundTruth": "repeatatleast(concat(<num>,contain(<cap>)),2)"
+        },
+        {
+            "positiveExamples": [
+                "a1",
+                "ba2",
+                "!e31",
+                "zZi2",
+                "o3123",
+                "U2",
+                "u01234"
+            ],
+            "negativeExamples": [
+                "B1",
+                "a",
+                "e",
+                "u!",
+                "z34",
+                "m;",
+                "!b12"
+            ],
+            "groundTruth": "endwith(concat(<vow>,contain(<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "ssjwiwo",
+                "yy asudfo oaf",
+                "ZHFj!!sh",
+                "hdI@@(#KF",
+                "!!!AAABBcd",
+                "!!!sd9fs89d8f98sdf",
+                "FFF!!!!CCC"
+            ],
+            "negativeExamples": [
+                "a!sa",
+                "",
+                "Z!@d13",
+                "13aCs",
+                "Aa",
+                "C3F",
+                "!!w2B"
+            ],
+            "groundTruth": "repeatatleast(endwith(<any>),7)"
+        },
+        {
+            "positiveExamples": [
+                "BBBBBBBa",
+                "BBBBBBBBe",
+                "cklmnopqrtu",
+                "zzzzzzzzzzzei",
+                "zzzzzzzzzzzoz",
+                "mmmmmmmmmmmmmi;",
+                "zzzzzzzzzzzzzzo!!"
+            ],
+            "negativeExamples": [
+                "za",
+                "zza",
+                "zzza",
+                "zzzzu",
+                "zzzzzi",
+                "kkkkkko",
+                "mmmmmmm"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,7),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "A!",
+                "Aa",
+                "A.",
+                "B!",
+                "Br",
+                "B#",
+                "G!"
+            ],
+            "negativeExamples": [
+                "1",
+                "a",
+                "A",
+                "@",
+                "",
+                " ",
+                ";"
+            ],
+            "groundTruth": "concat(<cap>,contain(or(or(<any>,<low>),<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "b",
+                "A",
+                "!"
+            ],
+            "negativeExamples": [
+                "a!",
+                "b!",
+                "A!",
+                "1!",
+                "a!b",
+                "a!1",
+                "a!!"
+            ],
+            "groundTruth": "not(concat(<any>,contain(<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "AAabc",
+                "AB123",
+                "AC4f45",
+                "FGREDD23",
+                "GGabc",
+                "EEE1df2",
+                "RTa"
+            ],
+            "negativeExamples": [
+                "Aa",
+                "Ebb",
+                "R123",
+                "123",
+                "fds",
+                "34bv",
+                "h78"
+            ],
+            "groundTruth": "concat(repeatatleast(<cap>,2),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "somethingaa",
+                "something elsee",
+                ",,aa",
+                "22twentytwooooo",
+                "uwuu",
+                "xii"
+            ],
+            "negativeExamples": [
+                "yayy",
+                "y is not a vowel :'(",
+                ",,,",
+                "",
+                "sadd",
+                "reaccs",
+                "only!"
+            ],
+            "groundTruth": "endwith(repeatatleast(<vow>,2))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "a c",
+                "c a",
+                "VOWEL",
+                "AEIOU 123",
+                "# start",
+                "! i"
+            ],
+            "negativeExamples": [
+                "r",
+                "123",
+                "##",
+                "N",
+                "ch @ 456",
+                "!!",
+                ""
+            ],
+            "groundTruth": "contain(and(<vow>,<any>))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "a1",
+                "ab1",
+                "A2",
+                "AB2",
+                "Ab2",
+                "   123"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "a",
+                "b",
+                "abcde",
+                "AB#$"
+            ],
+            "groundTruth": "concat(contain(star(<any>)),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "1a",
+                "aa",
+                "aBaB",
+                "a1a1",
+                "!b",
+                "!BBBBb",
+                " b"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "b",
+                "!",
+                "aA"
+            ],
+            "groundTruth": "concat(<any>,contain(contain(<low>)))"
+        },
+        {
+            "positiveExamples": [
+                "ABCD!",
+                "BCDF!",
+                "BCDFF!",
+                "ABCDE!!",
+                "PPPP!12",
+                "QQQQQ!!1",
+                "QQQQ!abc"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "ABCD",
+                "b",
+                "AB",
+                "ABC"
+            ],
+            "groundTruth": "concat(repeatatleast(<cap>,4),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "!abc1",
+                "!2",
+                "!f3d",
+                "!kD2",
+                "!fd%2",
+                "!tEr5",
+                "!45gE"
+            ],
+            "negativeExamples": [
+                "1",
+                "abc1",
+                "dF3s",
+                "nBv",
+                "fdR!",
+                "576",
+                "sd!2"
+            ],
+            "groundTruth": "concat(startwith(<m0>),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "bh12!",
+                "2d1d!",
+                "la0s!",
+                "s7!",
+                "AsAs!",
+                "chenqiaochu123!"
+            ],
+            "negativeExamples": [
+                "AAAA!",
+                "nonono",
+                "BIG!",
+                "UPPER!",
+                "asd",
+                "AnsS",
+                "ASch12"
+            ],
+            "groundTruth": "contain(concat(and(<low>,<any>),contain(<m0>)))"
+        },
+        {
+            "positiveExamples": [
+                "1a",
+                "aa",
+                "1,",
+                "b,",
+                "4'",
+                "g;",
+                "gG"
+            ],
+            "negativeExamples": [
+                "1",
+                "a",
+                ",",
+                "'",
+                "Aa",
+                "B2",
+                "CC"
+            ],
+            "groundTruth": "concat(or(<num>,<low>),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "!!!!1",
+                "!!!!123",
+                "!!!!!4",
+                "a!!!!1",
+                "1!!!!1a",
+                "1!!!!1",
+                "!!!!!!2"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "!",
+                "!!",
+                "!!!1"
+            ],
+            "groundTruth": "concat(repeatatleast(contain(<m0>),4),contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "a@",
+                "b@",
+                "!d@",
+                "ab@",
+                "a!@",
+                "cde@"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "a",
+                "@",
+                "A@",
+                "!a"
+            ],
+            "groundTruth": "concat(or(<m0>,<low>),contain(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "1a",
+                "1b",
+                "b",
+                "@...a",
+                ",b",
+                "@@"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "endwith(or(<any>,<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "abc1A",
+                "fr2e",
+                "143I",
+                "8h7Ud",
+                "g5Dre89V",
+                "!ds3Ef",
+                "a5e"
+            ],
+            "negativeExamples": [
+                "2d",
+                "a5c",
+                "ae",
+                "hj7P",
+                "a",
+                "4",
+                ""
+            ],
+            "groundTruth": "concat(<any>,contain(concat(<num>,contain(<vow>))))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "!2@",
+                "!2@3",
+                "!@34",
+                "!@a!@",
+                "!@ !",
+                "!@a"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "@",
+                "a",
+                "!a",
+                "!2"
+            ],
+            "groundTruth": "startwith(concat(<m0>,contain(<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "ab!!",
+                "natural!!!",
+                "unta!!",
+                "bAb!!",
+                "cCa!!sd",
+                "jih!!sda",
+                "Cosda!s!!sd"
+            ],
+            "negativeExamples": [
+                "s!",
+                "one!",
+                "no",
+                "cool",
+                "",
+                "befeo!sd",
+                "123!"
+            ],
+            "groundTruth": "concat(<let>,contain(repeatatleast(<m0>,2)))"
+        },
+        {
+            "positiveExamples": [
+                "a!l",
+                "A!d",
+                "e123!ghjk",
+                "E!567Lk",
+                "i!0j",
+                "I!!5g",
+                "O!LKJo"
+            ],
+            "negativeExamples": [
+                "s!h",
+                "S!cd",
+                "a!L",
+                "al",
+                "a45ghy",
+                "E@567jk",
+                "Q234!f3r"
+            ],
+            "groundTruth": "and(concat(<vow>,contain(<m0>)),endwith(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "aq",
+                "e!",
+                "iZ",
+                "o[",
+                "u5",
+                "o;",
+                "u^"
+            ],
+            "negativeExamples": [
+                "z",
+                "q3",
+                "p0",
+                "",
+                "m;;",
+                "z'''",
+                "q!"
+            ],
+            "groundTruth": "repeatatleast(startwith(concat(<vow>,contain(<any>))),1)"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "aa",
+                "a@",
+                "E!",
+                "Eg",
+                "E@",
+                "Ie!@"
+            ],
+            "negativeExamples": [
+                "q!",
+                "r@",
+                "rg",
+                "1r",
+                "!",
+                "@",
+                "a"
+            ],
+            "groundTruth": "concat(<vow>,contain(or(or(<m0>,<low>),<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "1!",
+                "2!",
+                "1!a",
+                "1!B",
+                "a1!",
+                "B1!",
+                " 1! d"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "!",
+                "1",
+                "a",
+                "123",
+                "12a"
+            ],
+            "groundTruth": "concat(contain(<num>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "3!h",
+                "86!gj",
+                "79!dgA",
+                "87!24",
+                "97!34Dgc",
+                "9!2a",
+                "87!sg"
+            ],
+            "negativeExamples": [
+                "asd!sd",
+                "B!sd",
+                "S12",
+                "Bunrs",
+                "123",
+                "!sda",
+                "!12SD"
+            ],
+            "groundTruth": "concat(repeatatleast(startwith(<num>),1),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "DFGHJKJHGFD",
+                "OIUYTRE",
+                "LKJHGFDS",
+                "ZXCVBNM",
+                "SDFGHJK",
+                "POIUYTRE",
+                "WEDFGH"
+            ],
+            "negativeExamples": [
+                "sdfghjk",
+                "oiuytre",
+                "cvbnm",
+                "ytrdcvbnjk",
+                "gkhgfghjkl.u,ymt",
+                "uhgyftcvbnm",
+                ""
+            ],
+            "groundTruth": "repeatatleast(<cap>,6)"
+        },
+        {
+            "positiveExamples": [
+                "3a",
+                "4b 5c",
+                "5c and a word",
+                "0we plus plus",
+                "7m and another wor#d",
+                "6k 33",
+                "7u7 valid"
+            ],
+            "negativeExamples": [
+                "no number",
+                "Nonumber",
+                "single number 5",
+                "word5",
+                "##5",
+                "",
+                "IO3 27"
+            ],
+            "groundTruth": "repeatatleast(concat(<num>,contain(<any>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "aeioua",
+                "eeeeee",
+                "oeaoes",
+                "uoauuv",
+                "uaoiik",
+                "iiiiim",
+                "iouaew"
+            ],
+            "negativeExamples": [
+                "this is a test to see what is happening if I just type stuff in",
+                "",
+                "aeios",
+                "tttttt",
+                "foesek",
+                "folksy",
+                "sat"
+            ],
+            "groundTruth": "concat(repeatatleast(<vow>,5),contain(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "a1",
+                "b2",
+                "abc123",
+                "hgf5",
+                "g0",
+                "a8b",
+                "c10d"
+            ],
+            "negativeExamples": [
+                "1",
+                "0",
+                "a",
+                "b",
+                "A",
+                ",",
+                "11"
+            ],
+            "groundTruth": "concat(<low>,contain(<num>))"
+        },
+        {
+            "positiveExamples": [
+                "1abc",
+                "abc",
+                "efg",
+                ",abc",
+                "123abc",
+                "1a4rtgy",
+                " abc"
+            ],
+            "negativeExamples": [
+                "ab",
+                "a",
+                "1",
+                "12",
+                ",2",
+                "",
+                " d"
+            ],
+            "groundTruth": "endwith(repeatatleast(<any>,3))"
+        },
+        {
+            "positiveExamples": [
+                "1!",
+                "2@",
+                "1a",
+                "42",
+                "5!",
+                "23!",
+                "45@"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "",
+                "1",
+                "2",
+                "a",
+                "!"
+            ],
+            "groundTruth": "concat(<num>,contain(or(or(<m0>,<any>),<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "@e",
+                "1i",
+                "!A",
+                "!ddda",
+                "3ddde",
+                "@1E"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                " ",
+                "a",
+                "1",
+                "!",
+                "@"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<num>),<m1>),contain(<vow>))"
+        },
+        {
+            "positiveExamples": [
+                "ca",
+                "bec",
+                "bidf",
+                "zoggd",
+                "dutttfzxi",
+                "haffssa",
+                "ga234aa"
+            ],
+            "negativeExamples": [
+                "",
+                "dddddd",
+                "cc234234",
+                "e",
+                "4234ffffddd",
+                "ccczzz",
+                "4234fff"
+            ],
+            "groundTruth": "repeatatleast(concat(<low>,contain(<vow>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "",
+                "@f15",
+                "gcaro",
+                "Ciro211",
+                "Z2i3",
+                " !jdfkj",
+                "F!2i3r"
+            ],
+            "negativeExamples": [
+                "!",
+                "1erfa2",
+                "5afAfjw!",
+                "9!isfoK",
+                "!!fja22",
+                "2",
+                "9"
+            ],
+            "groundTruth": "not(startwith(or(<m0>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "a@",
+                "A@",
+                "0@",
+                "aa@",
+                "@@",
+                "a0@"
+            ],
+            "negativeExamples": [
+                "",
+                "@",
+                "@a",
+                "@b",
+                "@c",
+                "@A",
+                "@!"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<let>),<any>),contain(<m1>))"
+        },
+        {
+            "positiveExamples": [
+                "1a2b3c4d5e",
+                "5b3d2h7f2f5h",
+                "8g4h2k7l7c4h2d",
+                "1a4f9h9h6j0k0l3",
+                "67d2g4h2k22l",
+                "3h543j2l63j3k7b",
+                "23f4dg26hj8g0g6k"
+            ],
+            "negativeExamples": [
+                "1a2b3c4d",
+                "9L3G7h9l0g",
+                "1a2b3C4d5e",
+                "123478",
+                "asdfgh",
+                "d4g4l0h7s2",
+                "g86hjk678kjh6"
+            ],
+            "groundTruth": "repeatatleast(concat(<num>,contain(<low>)),5)"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "aA",
+                "aaaB",
+                "a1",
+                "a;",
+                "a>?",
+                "b///"
+            ],
+            "negativeExamples": [
+                "A",
+                "AA",
+                "A!",
+                "AMC",
+                "BBC",
+                "CNN",
+                "ZZZ!"
+            ],
+            "groundTruth": "concat(not(<any>),contain(endwith(<low>)))"
+        },
+        {
+            "positiveExamples": [
+                "qw",
+                "12",
+                "1d",
+                "g6",
+                "*6",
+                "",
+                "D4g#fh6m"
+            ],
+            "negativeExamples": [
+                "a",
+                "1",
+                "#",
+                "!",
+                "M",
+                "0",
+                "@"
+            ],
+            "groundTruth": "not(<any>)"
+        },
+        {
+            "positiveExamples": [
+                " Wa",
+                "124Ae",
+                "123AE",
+                "AAAE",
+                "AE Ae",
+                "!!Ao",
+                "  !BBBeee"
+            ],
+            "negativeExamples": [
+                " ",
+                "",
+                "1",
+                "a",
+                "A",
+                "!",
+                " Aw"
+            ],
+            "groundTruth": "endwith(concat(<cap>,contain(<vow>)))"
+        },
+        {
+            "positiveExamples": [
+                "fa",
+                "c1d1",
+                "z2fa111!!!",
+                "v22vsd2",
+                "xfas33",
+                "cBSDF231!!",
+                "qabFF22111"
+            ],
+            "negativeExamples": [
+                "1ffddd",
+                "ABBcc",
+                "",
+                "11@@@afnsdf",
+                "222VVV!!!",
+                "P123ffff",
+                "!!so23"
+            ],
+            "groundTruth": "repeatatleast(concat(<low>,contain(<any>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "a!C",
+                "#abc!234aU3",
+                "{!X",
+                "~!Z",
+                "*er!weMwe",
+                "(!V",
+                "K!W"
+            ],
+            "negativeExamples": [
+                "Jon",
+                "!!!",
+                "a!a",
+                "a!>",
+                "b!0",
+                "a*C",
+                ""
+            ],
+            "groundTruth": "concat(concat(<any>,contain(<m0>)),contain(<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "1",
+                "askjdf!",
+                "@ifjsdfj2",
+                "A234fasdf3",
+                "23fjasdf!",
+                "429-1jf!"
+            ],
+            "negativeExamples": [
+                "!a",
+                "",
+                "c!A",
+                "1f3Z",
+                "f23!!x",
+                "1dsasdf!F",
+                "C"
+            ],
+            "groundTruth": "endwith(or(<m0>,<num>))"
+        },
+        {
+            "positiveExamples": [
+                "!a",
+                "!b",
+                "!!a",
+                "!a!a",
+                "!!b!!b",
+                "!ba",
+                "!a"
+            ],
+            "negativeExamples": [
+                "b",
+                "",
+                "words containing",
+                "start!",
+                ",,,",
+                "!,",
+                "lol"
+            ],
+            "groundTruth": "concat(<m0>,contain(<let>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "a !",
+                "123 a !",
+                "Capital !",
+                "CC ! other",
+                "mix ! !",
+                "# is this valid !"
+            ],
+            "negativeExamples": [
+                "nothing",
+                "123",
+                "!",
+                "! plus",
+                "",
+                "UI",
+                "! abc #"
+            ],
+            "groundTruth": "concat(<any>,contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "abcde",
+                "bbbbb",
+                "1bbbbb",
+                "1bbbbb2",
+                "1bbbbbb2",
+                "bbbbbb",
+                "bbbbbbbbb"
+            ],
+            "negativeExamples": [
+                " ",
+                "",
+                "a",
+                "ab",
+                "abc",
+                "abcd",
+                "123"
+            ],
+            "groundTruth": "contain(repeatatleast(<let>,5))"
+        },
+        {
+            "positiveExamples": [
+                "2aa",
+                "2ab",
+                "1aaaaa",
+                "1cat",
+                "1fish",
+                "2fish",
+                "7hearts"
+            ],
+            "negativeExamples": [
+                "redfish",
+                "blue fish",
+                ",,,",
+                "",
+                "a1cat",
+                "yay!",
+                "numeral counts a number with more than one character"
+            ],
+            "groundTruth": "concat(<num>,contain(repeatatleast(<let>,2)))"
+        },
+        {
+            "positiveExamples": [
+                "Aa",
+                "aa",
+                "Ba",
+                "!a",
+                "!aa",
+                "!a3",
+                "ae3"
+            ],
+            "negativeExamples": [
+                "a",
+                "!",
+                "A",
+                "1",
+                "!A",
+                "aA",
+                "AA"
+            ],
+            "groundTruth": "concat(or(or(<vow>,<m0>),<cap>),contain(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "aaa",
+                "aAa",
+                "aA!",
+                "bA!n",
+                "lol!",
+                "ooo",
+                "nof~"
+            ],
+            "negativeExamples": [
+                "Aa",
+                "",
+                "Aba",
+                "Bb",
+                "No",
+                "N~",
+                "X,"
+            ],
+            "groundTruth": "concat(<low>,contain(and(<vow>,<any>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "0",
+                "!a0",
+                "aa@",
+                "0a",
+                "00",
+                "666"
+            ],
+            "negativeExamples": [
+                "",
+                "@",
+                "!",
+                "#",
+                "@@",
+                "!!",
+                "!!!"
+            ],
+            "groundTruth": "contain(endwith(or(<let>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "A",
+                "B",
+                "b",
+                "a",
+                "a",
+                "a"
+            ],
+            "negativeExamples": [
+                "",
+                "1",
+                "10",
+                "AB",
+                "ab",
+                "Ab",
+                ","
+            ],
+            "groundTruth": "or(or(<let>,<low>),<cap>)"
+        },
+        {
+            "positiveExamples": [
+                "1aA",
+                "1aa",
+                "2bB",
+                "3bC",
+                "1999bC",
+                "20oO",
+                "13rS"
+            ],
+            "negativeExamples": [
+                "1",
+                "",
+                "1Aa",
+                "blah",
+                "Aa1",
+                ",,,",
+                "hello!"
+            ],
+            "groundTruth": "concat(<num>,contain(concat(<low>,contain(<let>))))"
+        },
+        {
+            "positiveExamples": [
+                "!A",
+                "1B",
+                "aA",
+                "aaA",
+                "1aAA",
+                "aaaAAA",
+                "aAAA"
+            ],
+            "negativeExamples": [
+                "0a",
+                "a",
+                "!",
+                "B",
+                "@",
+                "A@",
+                "a@"
+            ],
+            "groundTruth": "concat(or(or(<m0>,<low>),<any>),contain(<cap>))"
+        },
+        {
+            "positiveExamples": [
+                "ba",
+                "1ba",
+                "!ba",
+                "Aba",
+                "AB",
+                "Ab",
+                "aB"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "!",
+                "a",
+                "B",
+                "   "
+            ],
+            "groundTruth": "concat(<any>,contain(<let>))"
+        },
+        {
+            "positiveExamples": [
+                "Oo",
+                "words",
+                "many words",
+                "what has happened",
+                "No big numbers",
+                "I gues not",
+                "fake"
+            ],
+            "negativeExamples": [
+                "TESTING",
+                "ALL CAPS",
+                "#$@#$",
+                "!!!!!!",
+                ")(ASDFA*)",
+                "80943584",
+                "324@#$@WERWE"
+            ],
+            "groundTruth": "concat(<let>,contain(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "abcde1",
+                "abcde2",
+                "abcdeF",
+                "abcdef",
+                "abcde!",
+                "AAAAA1",
+                "BBBBBB"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "1",
+                "a",
+                "aa",
+                "aaaa",
+                "aaaaa"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,5),contain(<any>))"
+        },
+        {
+            "positiveExamples": [
+                "!@",
+                "!!@",
+                "!!!a",
+                "!@b",
+                "!!@c",
+                "!!!d@",
+                "!!!@6@"
+            ],
+            "negativeExamples": [
+                "@",
+                "a@",
+                "@@",
+                "@@@",
+                "1@",
+                "2@",
+                "@@@@"
+            ],
+            "groundTruth": "concat(repeatatleast(<m0>,1),contain(not(<m1>)))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "! is ok",
+                "char !",
+                "!!",
+                "## !",
+                "789 !",
+                "! 234"
+            ],
+            "negativeExamples": [
+                "",
+                "char",
+                "number 1",
+                "456",
+                "special 12",
+                "special ##",
+                "invalid@ before"
+            ],
+            "groundTruth": "concat(star(<any>),contain(<m0>))"
+        },
+        {
+            "positiveExamples": [
+                "a",
+                "adfa",
+                "wW",
+                "akfjas",
+                "afjlsf",
+                "#?a",
+                "a!!"
+            ],
+            "negativeExamples": [
+                "A",
+                "AA",
+                "",
+                "BS",
+                "WWWWWWW",
+                "AJKALJLAJKJL",
+                "!@#!@#!@#!@#"
+            ],
+            "groundTruth": "startwith(contain(<low>))"
+        },
+        {
+            "positiveExamples": [
+                "l",
+                "L",
+                "l and 1",
+                "Letter",
+                "33",
+                "!a!",
+                "##"
+            ],
+            "negativeExamples": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "groundTruth": "contain(or(or(<low>,<let>),<any>))"
+        },
+        {
+            "positiveExamples": [
+                "a!",
+                "a4",
+                "Gg5",
+                "Fh!",
+                "3Dg6",
+                "d3h#4!",
+                "23dT2!"
+            ],
+            "negativeExamples": [
+                "QD!",
+                "1!",
+                "5678!",
+                "3a",
+                "!hyk",
+                "gfds",
+                "h"
+            ],
+            "groundTruth": "endwith(or(concat(<low>,contain(<m0>)),<num>))"
+        },
+        {
+            "positiveExamples": [
+                "!",
+                "!2Afjsdf",
+                "!bcd",
+                "!345",
+                "!!!!!2342",
+                "!AAA234",
+                "!239CCC34"
+            ],
+            "negativeExamples": [
+                "ajksdfj",
+                "23!",
+                "Z",
+                "xY234!!",
+                "abcd",
+                "2!",
+                " !"
+            ],
+            "groundTruth": "concat(<m0>,contain(not(<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "A111a",
+                "Ae",
+                "Ba",
+                "B1122e",
+                "B1122oo",
+                "M    u",
+                "R1234O"
+            ],
+            "negativeExamples": [
+                "",
+                " ",
+                "a",
+                "1",
+                "!",
+                "AR",
+                "A12"
+            ],
+            "groundTruth": "concat(<cap>,contain(endwith(<vow>)))"
+        },
+        {
+            "positiveExamples": [
+                "aaaaaaAaa",
+                "m;;asdf;cjfdsFasdfF",
+                "k!0()sfasdhvyaQQQQAPasdfPPP",
+                "g~'\"asdfoqpweru23$_AAaAaBcA",
+                "aB",
+                "aBa",
+                "1Zd3Z3"
+            ],
+            "negativeExamples": [
+                "Aa",
+                "BB!z",
+                "CCCCCCCC",
+                "G",
+                "!Lm",
+                "~\"Boo",
+                "!@#$%1234Moo"
+            ],
+            "groundTruth": "concat(contain(<low>),contain(<cap>))"
+        }
+    ]
+}

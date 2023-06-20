@@ -1,0 +1,1712 @@
+{
+    "Dataset Name": "SO",
+    "Description": "Examples from StackOverflow. Data extracted from the Regel Repository",
+    "Tasks": [
+        {
+            "positiveExamples": [
+                "ABBCCAABBC",
+                "ABCAAAAAA",
+                "A",
+                "ABBC"
+            ],
+            "negativeExamples": [
+                "ABBDF",
+                "ASD",
+                ""
+            ],
+            "groundTruth": "repeatatleast(or(<A>,or(<B>,<C>)),1)"
+        },
+        {
+            "positiveExamples": [
+                "1:x:456",
+                "2:2:3",
+                "3:abc:123",
+                "333:abc:123456"
+            ],
+            "negativeExamples": [
+                "x:1:2",
+                "1::2",
+                "1:3::x",
+                "1:2",
+                "fyz::2:1",
+                "1:3::3"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),repeat(concat(<:>,or(repeatatleast(<let>,1),repeatatleast(<num>,1))),2))"
+        },
+        {
+            "positiveExamples": [
+                "m-a 12",
+                "abc-ab 1234",
+                "ab-ab 1234"
+            ],
+            "negativeExamples": [
+                "m a 12",
+                "abc a 12",
+                "abc-abc 12",
+                "abc-ab-12",
+                "abc-ab 12345"
+            ],
+            "groundTruth": "concat(repeatrange(<let>,1,3),concat(<->,concat(repeatrange(<let>,1,2),concat(< >,repeatrange(<num>,1,4)))))\n\n// visual format\nconcat(R1,concat(R2,concat(R3,concat(R4,R5))))"
+        },
+        {
+            "positiveExamples": [
+                "+91",
+                "91"
+            ],
+            "negativeExamples": [
+                "++91",
+                "+9+1",
+                "91+",
+                "+91&*&"
+            ],
+            "groundTruth": "concat(optional(<+>),repeatatleast(<num>,1))"
+        },
+        {
+            "positiveExamples": [
+                "0123456",
+                "1234567",
+                "0123456789",
+                "1233467890"
+            ],
+            "negativeExamples": [
+                "123456",
+                "12345678",
+                "123456789"
+            ],
+            "groundTruth": "or(repeat(<num>,7),repeat(<num>,10))"
+        },
+        {
+            "positiveExamples": [
+                "123.12",
+                "2",
+                "56754",
+                "92929292929292.12",
+                "0.21",
+                "3.1"
+            ],
+            "negativeExamples": [
+                "12.1232",
+                "2.23332",
+                "e666.76"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),optional(concat(<.>,repeatrange(<num>,1,2))))"
+        },
+        {
+            "positiveExamples": [
+                "Geek12#"
+            ],
+            "negativeExamples": [
+                "asd123"
+            ],
+            "groundTruth": "and(contain(<num>),and(and(contain(<cap>),contain(<low>)),and(contain(<spec>),repeatrange(<any>,6,20))))"
+        },
+        {
+            "positiveExamples": [
+                "aa",
+                "aaaaa",
+                "a.",
+                "a-a",
+                "a a"
+            ],
+            "negativeExamples": [
+                "a",
+                "aa.aa.",
+                "aa-"
+            ],
+            "groundTruth": "and(repeatatleast(<any>,2),concat(repeatatleast(<let>,1),or(endwith(<.>),concat(optional(or(< >,<->)),repeatatleast(<let>,1)))))"
+        },
+        {
+            "positiveExamples": [
+                "test.file.D%d4%",
+                "%d4%.test.file",
+                "D%d4%.T%t7%.test.%t7%file.%d4%.txt"
+            ],
+            "negativeExamples": [
+                "t%est.file.D%d4%",
+                "%d4%.te%st.file",
+                "D%d4%.T%t7%.te%st.%t7%file.%d4%.txt"
+            ],
+            "groundTruth": "repeatatleast(or(or(<let>,<num>),or(<.>,or(concat(<%>,concat(<t>,concat(<7>,<%>))),concat(<%>,concat(<d>,concat(<4>,<%>)))))),1)"
+        },
+        {
+            "positiveExamples": [
+                "4.1",
+                "421.11",
+                "467.111",
+                "438904.1111",
+                "0.1"
+            ],
+            "negativeExamples": [
+                ".",
+                "123.",
+                ".123",
+                "44.aaaa",
+                "44.1aaa",
+                "1234.a",
+                "489.a",
+                "435.aaa",
+                "412.1aaaa",
+                "1567.11a"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),concat(<.>,repeatrange(<num>,1,4)))"
+        },
+        {
+            "positiveExamples": [
+                "gfg",
+                "_abc12"
+            ],
+            "negativeExamples": [
+                "123",
+                "#abc"
+            ],
+            "groundTruth": "and(startwith(or(<let>,<_>)),repeatatleast(or(<alphanum>,<_>),1))"
+        },
+        {
+            "positiveExamples": [
+                "1234567890"
+            ],
+            "negativeExamples": [
+                "$123456789012",
+                "a123456789",
+                "123456789"
+            ],
+            "groundTruth": "and(repeatatleast(<num>,10),not(startwith(<$>)))"
+        },
+        {
+            "positiveExamples": [
+                "00000001",
+                "101AE24",
+                "01234",
+                "00001"
+            ],
+            "negativeExamples": [
+                "00"
+            ],
+            "groundTruth": "and(not(repeatatleast(<0>,1)),repeatrange(<alphanum>,3,20))"
+        },
+        {
+            "positiveExamples": [
+                "1.23",
+                "100",
+                "1,234",
+                "1234",
+                "1,234.56",
+                "0.56",
+                "1,234,567.89"
+            ],
+            "negativeExamples": [
+                "1.ab",
+                "1,2345.67",
+                "0,123.45",
+                "1.24,687"
+            ],
+            "groundTruth": "concat(or(concat(repeatrange(<num1-9>,0,2),repeatatleast(concat(<,>,repeat(<num>,3)),1)),or(concat(<num1-9>,star(<num>)),<0>)),optional(concat(<.>,repeatatleast(<num>,1))))"
+        },
+        {
+            "positiveExamples": [
+                "175",
+                "1.250",
+                "14.365",
+                "145.985",
+                "1.562.745",
+                "17.487.984",
+                "999.999.999"
+            ],
+            "negativeExamples": [
+                "176.57.117",
+                "176.257.7",
+                "176.257.17"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,3),repeatrange(concat(<.>,repeat(<num>,3)),0,2))"
+        },
+        {
+            "positiveExamples": [
+                "My Name Is Jass"
+            ],
+            "negativeExamples": [
+                "My name is Jass"
+            ],
+            "groundTruth": "concat(concat(<cap>,star(<let>)),star(concat(< >,concat(<cap>,star(<let>)))))"
+        },
+        {
+            "positiveExamples": [
+                "77",
+                "2377"
+            ],
+            "negativeExamples": [
+                "77.43",
+                "xyz777"
+            ],
+            "groundTruth": "repeatatleast(<num>,1)"
+        },
+        {
+            "positiveExamples": [
+                "ankit"
+            ],
+            "negativeExamples": [
+                "Feeks",
+                "sandeep"
+            ],
+            "groundTruth": "startwith(<vow>)"
+        },
+        {
+            "positiveExamples": [
+                "09103,09101,",
+                "09103,09101",
+                "12345,123456789"
+            ],
+            "negativeExamples": [
+                "12345,1234567"
+            ],
+            "groundTruth": "concat(or(repeat(<num>,5),repeat(<num>,9)),concat(repeatatleast(or(repeat(<num>,5),repeat(<num>,9)),1),optional(<,>)))"
+        },
+        {
+            "positiveExamples": [
+                "u78945",
+                "s56123"
+            ],
+            "negativeExamples": [
+                "456a12",
+                "78561d",
+                "1234567"
+            ],
+            "groundTruth": "concat(<let>,repeat(<num>,5))"
+        },
+        {
+            "positiveExamples": [
+                "white snake",
+                "white snake valley"
+            ],
+            "negativeExamples": [
+                "white  snake"
+            ],
+            "groundTruth": "not(contain(concat(< >,< >)))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "1/2"
+            ],
+            "negativeExamples": [
+                "Some_text",
+                "some/test",
+                "Some",
+                "2///2",
+                "/12",
+                "1/2/",
+                "1.2/3"
+            ],
+            "groundTruth": "concat(<num>,optional(concat(</>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "Page 2 of 20"
+            ],
+            "negativeExamples": [
+                "Page 2 of X"
+            ],
+            "groundTruth": "concat(concat(<P>,concat(<a>,concat(<g>,<e>))),concat(concat(< >,concat(repeatatleast(<num>,1),< >)),concat(concat(concat(<o>,<f>),< >),repeatatleast(<num>,1))))\n\n// visual format\nconcat(concat(<P>,concat(<a>,concat(<g>,<e>))),concat(concat(< >,concat(R1,< >)),concat(concat(concat(<o>,<f>),< >),R1)))"
+        },
+        {
+            "positiveExamples": [
+                "aab",
+                "abb",
+                "aaba"
+            ],
+            "negativeExamples": [
+                "\u039b",
+                "ab",
+                "abaa"
+            ],
+            "groundTruth": "or(startwith(concat(<a>,<a>)),endwith(concat(<b>,<b>)))"
+        },
+        {
+            "positiveExamples": [
+                "1-252",
+                "9823-10000",
+                "123456-123457"
+            ],
+            "negativeExamples": [
+                "0-252",
+                "12345",
+                "498 8987",
+                "0023-002343",
+                "2-10-233"
+            ],
+            "groundTruth": "concat(and(not(startwith(<0>)),repeatrange(<num>,1,6)),concat(<->,and(not(startwith(<0>)),repeatrange(<num>,1,6))))\n\n\n// visual format\nconcat(R1,concat(<->,R1))"
+        },
+        {
+            "positiveExamples": [
+                "%%",
+                "% %",
+                "%a%",
+                "%1%",
+                "% a1a %",
+                "%%%"
+            ],
+            "negativeExamples": [
+                " %%",
+                "%% ",
+                " % ",
+                " a%%b "
+            ],
+            "groundTruth": "concat(<%>,concat(star(<any>),<%>))"
+        },
+        {
+            "positiveExamples": [
+                "390987.456"
+            ],
+            "negativeExamples": [
+                "GHI345928.039"
+            ],
+            "groundTruth": "concat(repeat(<num>,6),concat(<.>,repeat(<num>,3)))"
+        },
+        {
+            "positiveExamples": [
+                "Foo",
+                "Hello World",
+                "Hello-world",
+                "Bigsby Platt-slatt"
+            ],
+            "negativeExamples": [
+                "foo",
+                "Hello world",
+                "Hello-World",
+                "33333333333"
+            ],
+            "groundTruth": "and(repeatrange(<any>,3,20),and(startwith(<cap>),and(not(contain(concat(<cap>,<cap>))),and(not(contain(concat(not(<let>),< >))),and(not(contain(concat(< >,not(<cap>)))),and(not(contain(concat(not(<let>),<->))),and(not(contain(concat(<->,not(<low>)))),not(contain(concat(<cap>,not(or(<low>,or(<->,< >)))))))))))))"
+        },
+        {
+            "positiveExamples": [
+                "0,25",
+                "10,2",
+                "-7000",
+                "-175,33",
+                "15555555555555,99"
+            ],
+            "negativeExamples": [
+                "9,999",
+                "15.03",
+                "77,77,77"
+            ],
+            "groundTruth": "concat(concat(optional(<->),repeatatleast(<num>,1)),concat(optional(<,>),repeatrange(<num>,0,2)))"
+        },
+        {
+            "positiveExamples": [
+                "hoho",
+                "hihi",
+                "haha"
+            ],
+            "negativeExamples": [
+                "hede"
+            ],
+            "groundTruth": "not(contain(concat(concat(<h>,<e>),concat(<d>,<e>))))"
+        },
+        {
+            "positiveExamples": [
+                "0.2lb",
+                "1.2lb",
+                "2lb"
+            ],
+            "negativeExamples": [
+                "05lb"
+            ],
+            "groundTruth": "not(startwith(concat(<0>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "0990 09253U108 BX",
+                "0990 02376R102 AAL"
+            ],
+            "negativeExamples": [
+                "00000003610014112202013 2 5",
+                "00000003610014112192013 2 47"
+            ],
+            "groundTruth": "startwith(concat(repeat(<num>,4),< >))"
+        },
+        {
+            "positiveExamples": [
+                "0.5",
+                "1",
+                "1.0",
+                "1.5",
+                "2",
+                "2.0",
+                "2.5",
+                "00001.0"
+            ],
+            "negativeExamples": [
+                "0.1",
+                "1.2",
+                "1.3",
+                "2.4"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),optional(concat(<.>,or(<0>,<5>))))"
+        },
+        {
+            "positiveExamples": [
+                "Name",
+                "My Name Is OK"
+            ],
+            "negativeExamples": [
+                "My     Name",
+                " My Name "
+            ],
+            "groundTruth": "and(not(contain(repeatatleast(< >,2))),concat(<alphanum>,concat(repeatatleast(<alphanum>,1),<alphanum>)))"
+        },
+        {
+            "positiveExamples": [
+                "Geeks"
+            ],
+            "negativeExamples": [
+                "geeksforgeeks"
+            ],
+            "groundTruth": "contain(concat(<cap>,<low>))"
+        },
+        {
+            "positiveExamples": [
+                "12345",
+                "1234.5",
+                "123.45",
+                "0.12"
+            ],
+            "negativeExamples": [
+                "1.2345",
+                "1.234",
+                "12.345"
+            ],
+            "groundTruth": "and(repeat(or(<.>,<num>),5),and(not(startwith(<.>)),and(not(endwith(<.>)),concat(repeatrange(<num>,1,5),optional(concat(<.>,repeatrange(<num>,1,2)))))))"
+        },
+        {
+            "positiveExamples": [
+                "123,4A67,GGG,767",
+                "test",
+                "test,test",
+                "test123,Test123,test"
+            ],
+            "negativeExamples": [
+                "12333,78787&*,GH778",
+                "fghkjhfdg8797<"
+            ],
+            "groundTruth": "concat(repeatatleast(<alphanum>,1),star(concat(<,>,repeatatleast(or(<let>,<num>),1))))"
+        },
+        {
+            "positiveExamples": [
+                "A4hgg5"
+            ],
+            "negativeExamples": [
+                "A4_6hy",
+                "a@yb",
+                "_"
+            ],
+            "groundTruth": "repeatatleast(<alphanum>,1)"
+        },
+        {
+            "positiveExamples": [
+                "SH123456",
+                "ab123456",
+                "12345678",
+                "sd456565"
+            ],
+            "negativeExamples": [
+                "S2D3E4F5",
+                "a1234567",
+                "1234567"
+            ],
+            "groundTruth": "or(repeat(<num>,8),concat(repeat(<let>,2),repeat(<num>,6)))"
+        },
+        {
+            "positiveExamples": [
+                "10.5",
+                "12.5"
+            ],
+            "negativeExamples": [
+                "12",
+                "-1.0",
+                "12.0",
+                "1.0",
+                "12.4"
+            ],
+            "groundTruth": "concat(repeat(<num>,2),concat(<.>,<5>))"
+        },
+        {
+            "positiveExamples": [
+                "0",
+                "0.00",
+                "0.12",
+                "0.14"
+            ],
+            "negativeExamples": [
+                "0.",
+                "1",
+                "1.00",
+                "2.00",
+                "0.000"
+            ],
+            "groundTruth": "concat(<0>,optional(concat(<.>,repeatrange(<num>,1,2))))"
+        },
+        {
+            "positiveExamples": [
+                "12345",
+                "10,23"
+            ],
+            "negativeExamples": [
+                "123456",
+                "10,234",
+                "123456,12",
+                "3,345"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,5),optional(concat(or(<.>,<,>),repeatrange(<num>,1,2))))"
+        },
+        {
+            "positiveExamples": [
+                "C01245",
+                "C04751"
+            ],
+            "negativeExamples": [
+                "C15821",
+                "C0412",
+                "C0a457"
+            ],
+            "groundTruth": "concat(startwith(concat(<C>,<0>)),endwith(repeat(<num>,4)))"
+        },
+        {
+            "positiveExamples": [
+                "test",
+                "test1",
+                "test1_",
+                "t(e_ s)t1 i/s \\good+-"
+            ],
+            "negativeExamples": [
+                "t,test",
+                "t.test",
+                "test!",
+                "te!@#$%st"
+            ],
+            "groundTruth": "repeatatleast(or(<let>,or(<num>,or(<_>,or(< >,or(<->,or(<+>,or(</>,or(<\\>,or(<(>,<)>))))))))),1)"
+        },
+        {
+            "positiveExamples": [
+                "HELLO",
+                "H",
+                ""
+            ],
+            "negativeExamples": [
+                "HE LLO",
+                " HELLO",
+                "HELLO ",
+                " "
+            ],
+            "groundTruth": "not(contain(< >))"
+        },
+        {
+            "positiveExamples": [
+                ".5",
+                ".6",
+                ".1",
+                "0",
+                "0.5",
+                "1.55",
+                "1234567890123",
+                "1234567890123.5",
+                "1234567890123.00"
+            ],
+            "negativeExamples": [
+                ".",
+                ".0",
+                "1.234",
+                "5.",
+                "12345678901234",
+                "12345678901234.56"
+            ],
+            "groundTruth": "and(concat(repeatrange(<num>,1,13),optional(concat(<.>,repeatrange(<num>,1,2)))),not(contain(concat(<.>,<0>))))"
+        },
+        {
+            "positiveExamples": [
+                "ACCCGTTNNGTCCGGA3",
+                "ACCCGTTNNGTCCGGATTGAANNGT9",
+                "TTGGACCNAC0",
+                "ACGGTA0"
+            ],
+            "negativeExamples": [
+                "BACGGTA0",
+                "TTGGACCNACACCCGTTNNGTCCGGATTGAANNGTTTGGACCNACACCCGTTNNGTCCGGATTGAANNGTTTGGACCNACACCCGTTNNGTCCGGATTGAANNGT2"
+            ],
+            "groundTruth": "concat(repeatrange(or(<A>,or(<C>,or(<G>,or(<T>,<N>)))),1,64),<num>)\n\n// visual format\nconcat(R1,R2)"
+        },
+        {
+            "positiveExamples": [
+                "A",
+                "a",
+                "B",
+                "b"
+            ],
+            "negativeExamples": [
+                "America",
+                "Bi",
+                "a door"
+            ],
+            "groundTruth": "or(or(<A>,<B>),or(<a>,<b>))"
+        },
+        {
+            "positiveExamples": [
+                "1A345678_add"
+            ],
+            "negativeExamples": [
+                "1A345678",
+                "1234567890",
+                "ABSDBASDB"
+            ],
+            "groundTruth": "concat(repeat(<hex>,8),concat(<_>,star(<let>)))"
+        },
+        {
+            "positiveExamples": [
+                "em1,erg,123,enc"
+            ],
+            "negativeExamples": [
+                "em1,erg,123,ency"
+            ],
+            "groundTruth": "concat(repeat(<any>,3),star(concat(<,>,repeat(<any>,3))))"
+        },
+        {
+            "positiveExamples": [
+                "+.12",
+                "-0.13",
+                "0.+",
+                "45.-"
+            ],
+            "negativeExamples": [
+                "+-0.12",
+                "+99.+2",
+                "0.-12"
+            ],
+            "groundTruth": "concat(optional(or(<+>,<->)),concat(concat(repeatatleast(<num>,1),concat(<.>,optional(repeatatleast(<num>,1)))),optional(or(<+>,<->))))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "0.1",
+                "9999"
+            ],
+            "negativeExamples": [
+                "0.0",
+                "0"
+            ],
+            "groundTruth": "or(concat(<0>,concat(<.>,concat(<num1-9>,star(<num>)))),concat(<num1-9>,concat(star(<num>),concat(<.>,star(<num>)))))"
+        },
+        {
+            "positiveExamples": [
+                "Test",
+                "Test-hello",
+                "Test-",
+                "-Test"
+            ],
+            "negativeExamples": [
+                "Test--hello",
+                "-test-",
+                "test-hello--"
+            ],
+            "groundTruth": "concat(star(not(<->)),concat(optional(<->),star(not(<->))))"
+        },
+        {
+            "positiveExamples": [
+                "B",
+                "B6",
+                "BB",
+                "AB"
+            ],
+            "negativeExamples": [
+                "G3",
+                "A B",
+                "A 4",
+                "6HC"
+            ],
+            "groundTruth": "concat(or(<A>,or(<B>,or(<C>,<Z>))),repeatrange(or(<let>,<num>),1,2))"
+        },
+        {
+            "positiveExamples": [
+                "ADFad1334",
+                "43545SFDDFdf454fgf",
+                "asdadadASD",
+                "A8",
+                "8S",
+                "B"
+            ],
+            "negativeExamples": [
+                "7",
+                "12312342",
+                "sdff23424#$"
+            ],
+            "groundTruth": "and(contain(<let>),repeatatleast(<alphanum>,1))"
+        },
+        {
+            "positiveExamples": [
+                "ankitrai326",
+                "geeksforgeeks"
+            ],
+            "negativeExamples": [
+                "ankirai@",
+                "ankit."
+            ],
+            "groundTruth": "endwith(<alphanum>)"
+        },
+        {
+            "positiveExamples": [
+                "0",
+                "2",
+                "0.4",
+                "78784764.23",
+                "45.232"
+            ],
+            "negativeExamples": [
+                "-2",
+                "123456789522144",
+                "84.2564"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,11),optional(concat(<.>,repeatrange(<num>,1,3))))"
+        },
+        {
+            "positiveExamples": [
+                "ABC.123*",
+                "*ABC.123",
+                "ABC.*123"
+            ],
+            "negativeExamples": [
+                "ABC.123",
+                "*ABC.123*"
+            ],
+            "groundTruth": "and(repeatrange(<any>,1,15),concat(star(or(<cap>,or(<num>,<.>))),concat(<*>,star(or(<cap>,or(<num>,<.>))))))"
+        },
+        {
+            "positiveExamples": [
+                "1@100%",
+                "9@50%",
+                "5@10%"
+            ],
+            "negativeExamples": [
+                "0@100%",
+                "a@50%",
+                "1@abc%"
+            ],
+            "groundTruth": "concat(<num1-9>,concat(<@>,concat(repeatrange(<num>,1,3),<%>)))\n\n// visual format\nconcat(concat(R1,<@>),concat(R2,<%>))"
+        },
+        {
+            "positiveExamples": [
+                "0",
+                "1000",
+                "50000",
+                "1,000",
+                "50,000",
+                "99,992,001"
+            ],
+            "negativeExamples": [
+                "00",
+                "0001",
+                "999",
+                "1,1,00",
+                "1.000.000"
+            ],
+            "groundTruth": "or(<0>,concat(<num1-9>,concat(repeatrange(<num>,0,2),or(repeatatleast(repeat(<num>,3),1),repeatatleast(concat(<,>,repeat(<num>,3)),1)))))"
+        },
+        {
+            "positiveExamples": [
+                "0.01",
+                "0.12",
+                "111.23",
+                "1234.56",
+                "012345.67",
+                "123.00",
+                "0.00"
+            ],
+            "negativeExamples": [
+                ".12",
+                "1.1",
+                "0.0",
+                "00.00",
+                "1234.",
+                "1234.567",
+                "1234",
+                "00123.45",
+                "abcd.12",
+                "12a4.56",
+                "1234.5A"
+            ],
+            "groundTruth": "and(not(startwith(repeatatleast(<0>,2))),concat(repeatatleast(<num>,1),concat(<.>,repeat(<num>,2))))\n\n// visual format\nconcat(and(R1,R2),R3)"
+        },
+        {
+            "positiveExamples": [
+                "1A",
+                "2BZ"
+            ],
+            "negativeExamples": [
+                "7B"
+            ],
+            "groundTruth": "concat(or(<1>,or(<2>,or(<3>,or(<4>,<5>)))),concat(or(<A>,or(<B>,<C>)),optional(or(<X>,or(<Y>,<Z>)))))"
+        },
+        {
+            "positiveExamples": [
+                "0,872",
+                "0,87",
+                "0,8",
+                "0,001",
+                "1,000",
+                "1,00",
+                "1",
+                "80,546",
+                "80,000",
+                "81,001"
+            ],
+            "negativeExamples": [
+                "0",
+                "0,0",
+                "0,00",
+                "0,000"
+            ],
+            "groundTruth": "and(not(contain(concat(<0>,concat(<,>,star(<0>))))),concat(repeatatleast(<num>,1),optional(concat(<,>,repeatrange(<num>,1,3)))))"
+        },
+        {
+            "positiveExamples": [
+                "A123",
+                "B345",
+                "C234",
+                "B986"
+            ],
+            "negativeExamples": [
+                "D123",
+                "A12",
+                "A123 hello"
+            ],
+            "groundTruth": "concat(or(<A>,or(<B>,<C>)),repeat(<num>,3))"
+        },
+        {
+            "positiveExamples": [
+                "1,5,10,55",
+                "12,34",
+                "1",
+                "1,2,3"
+            ],
+            "negativeExamples": [
+                ",",
+                ",34",
+                "1,,,,10"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),star(concat(<,>,repeatatleast(<num>,1))))"
+        },
+        {
+            "positiveExamples": [
+                "Hercules.Cycle",
+                "Herbal&Product",
+                "Welcome@123"
+            ],
+            "negativeExamples": [
+                "&Hercules",
+                "Colgate!()",
+                ".Youtube",
+                "@Incule"
+            ],
+            "groundTruth": "and(startwith(<alphanum>),repeatatleast(or(<alphanum>,or(<.>,or(<->,or(<#>,or(<&>,<@>))))),1))"
+        },
+        {
+            "positiveExamples": [
+                "04140000000",
+                "04240000000"
+            ],
+            "negativeExamples": [
+                "04340000000",
+                "14240000000",
+                "04170000000"
+            ],
+            "groundTruth": "concat(concat(<0>,<4>),concat(or(<1>,<2>),concat(or(<2>,or(<4>,<6>)),repeat(<num>,7))))\n\n// visual format\nconcat(concat(concat(<0>,<4>),concat(R1,R2)),repeat(R3,7))"
+        },
+        {
+            "positiveExamples": [
+                "*abc*",
+                "*ab*c",
+                "aaa?"
+            ],
+            "negativeExamples": [
+                "*aa",
+                "**aaa"
+            ],
+            "groundTruth": "and(contain(or(<?>,<*>)),and(not(contain(repeatatleast(or(<?>,<*>),2))),repeatatleast(<alphanum>,3)))"
+        },
+        {
+            "positiveExamples": [
+                "SO-123456",
+                "So-123456",
+                "sO-123456",
+                "so-123456"
+            ],
+            "negativeExamples": [
+                "SO-12d456",
+                "SO-1234567",
+                "QR-123456",
+                "SO-45k789"
+            ],
+            "groundTruth": "concat(concat(or(<S>,<s>),concat(or(<O>,<o>),<->)),repeat(<num>,6))"
+        },
+        {
+            "positiveExamples": [
+                "camp.new.",
+                "ca.mp.n.e.w"
+            ],
+            "negativeExamples": [
+                "camp..new",
+                ".."
+            ],
+            "groundTruth": "not(contain(concat(<.>,<.>)))"
+        },
+        {
+            "positiveExamples": [
+                "ab@4_w",
+                "sd!tye123"
+            ],
+            "negativeExamples": [
+                "sd%tye123",
+                "sd*tye123"
+            ],
+            "groundTruth": "repeatatleast(or(or(<let>,<num>),or(<~>,or(<!>,or(<@>,or(<#>,or(<$>,or(<->,<_>))))))),1)"
+        },
+        {
+            "positiveExamples": [
+                "abc#123",
+                "a%scsd",
+                "abacvfrdfrgthgfrthgf22222"
+            ],
+            "negativeExamples": [
+                "abc453&",
+                "ab",
+                "123%",
+                "abacvfrdfrgthgfrthgf222222"
+            ],
+            "groundTruth": "and(not(endwith(<spec>)),repeatrange(<any>,3,25))"
+        },
+        {
+            "positiveExamples": [
+                "%123",
+                "%1234",
+                "12%3",
+                "abc%",
+                "abc",
+                "A",
+                "ABC"
+            ],
+            "negativeExamples": [
+                "%",
+                "%12",
+                "%%%"
+            ],
+            "groundTruth": "or(not(contain(repeatatleast(<%>,1))),repeatatleast(<any>,4))"
+        },
+        {
+            "positiveExamples": [
+                "123",
+                "123.",
+                "123.4",
+                "0.2",
+                "11.1",
+                "11"
+            ],
+            "negativeExamples": [
+                "123..",
+                ".2",
+                "2.6.9"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),optional(concat(<.>,star(<num>))))"
+        },
+        {
+            "positiveExamples": [
+                "1,234",
+                "2,00",
+                "5",
+                "0,1",
+                "123545,123"
+            ],
+            "negativeExamples": [
+                "1,2345",
+                "2.00",
+                "56a"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),optional(concat(<,>,repeatrange(<num>,1,3))))"
+        },
+        {
+            "positiveExamples": [
+                "ABCDEF05",
+                "A21",
+                "C99"
+            ],
+            "negativeExamples": [
+                "d12",
+                "1",
+                "A123",
+                "A1234",
+                "AB00",
+                "ABCDEFG01"
+            ],
+            "groundTruth": "and(concat(repeatrange(<cap>,1,6),and(repeat(<num>,2),not(contain(concat(<0>,<0>))))),repeatrange(<any>,3,8))"
+        },
+        {
+            "positiveExamples": [
+                "1566",
+                "1566-02",
+                "1566-45"
+            ],
+            "negativeExamples": [
+                "1566-AC",
+                "1566 "
+            ],
+            "groundTruth": "concat(concat(<1>,concat(<5>,concat(<6>,<6>))),optional(concat(<->,repeat(<num>,2))))"
+        },
+        {
+            "positiveExamples": [
+                "1.1",
+                "1.1.3.4",
+                "1.0",
+                "1.1.334"
+            ],
+            "negativeExamples": [
+                "1",
+                "1.",
+                "1.."
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),repeatatleast(concat(<.>,repeatatleast(<num>,1)),1))\n\n// visual format\nconcat(R1,repeatatleast(concat(<.>,R1),1))"
+        },
+        {
+            "positiveExamples": [
+                "000000",
+                "0.0",
+                "0000.",
+                "0",
+                ".50000000",
+                "00001.",
+                "01.50",
+                "2.00000",
+                "2.5000",
+                "03",
+                "03.5",
+                "0004",
+                "0004.5000",
+                "00005.0",
+                "0.5",
+                "1",
+                "1.5",
+                "2",
+                "2.5",
+                "3",
+                "3.5",
+                "4",
+                "4.5",
+                "5"
+            ],
+            "negativeExamples": [
+                "-1",
+                "-.5",
+                "-0",
+                "1.05",
+                "5.5",
+                "10",
+                "20",
+                "30",
+                "40",
+                "50"
+            ],
+            "groundTruth": "concat(star(<0>),or(concat(or(<0>,or(<1>,or(<2>,or(<3>,<4>)))),optional(concat(<.>,concat(optional(<5>),star(<0>))))),concat(<5>,concat(<.>,star(<0>)))))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "1.5",
+                "11.5"
+            ],
+            "negativeExamples": [
+                "0..",
+                "0.",
+                "11.",
+                "12."
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,2),optional(concat(<.>,repeatrange(<num>,1,2))))"
+        },
+        {
+            "positiveExamples": [
+                "0",
+                "100",
+                "1,000",
+                "10,000"
+            ],
+            "negativeExamples": [
+                "01",
+                "100.50",
+                "1000",
+                "$10,000",
+                "-10,000"
+            ],
+            "groundTruth": "concat(or(<0>,repeatrange(concat(<num1-9>,<num>),0,2)),star(concat(<,>,repeat(<num>,3))))"
+        },
+        {
+            "positiveExamples": [
+                "07111111111",
+                "447111111111"
+            ],
+            "negativeExamples": [
+                "+4471111111111",
+                "021929182711",
+                "00701029182"
+            ],
+            "groundTruth": "and(repeatrange(<num>,10,14),or(startwith(concat(<0>,<7>)),startwith(concat(<4>,concat(<4>,<7>)))))"
+        },
+        {
+            "positiveExamples": [
+                "peter",
+                "alex",
+                "ramon",
+                "thomas"
+            ],
+            "negativeExamples": [
+                "pe<.?ter",
+                "ale8",
+                "?ramon",
+                "tho<>?mass"
+            ],
+            "groundTruth": "repeatatleast(<let>,1)"
+        },
+        {
+            "positiveExamples": [
+                "John Stevens 12",
+                "james stevens",
+                "willcall12",
+                "12cell space"
+            ],
+            "negativeExamples": [
+                "12cell space!",
+                "John@Stevens",
+                "james 12 Fall#"
+            ],
+            "groundTruth": "repeatatleast(or(<let>,or(<num>,< >)),1)"
+        },
+        {
+            "positiveExamples": [
+                "091123456"
+            ],
+            "negativeExamples": [
+                "0991234567",
+                "09912345"
+            ],
+            "groundTruth": "and(repeat(<num>,9),startwith(concat(<0>,<9>)))"
+        },
+        {
+            "positiveExamples": [
+                "geeks for geeks"
+            ],
+            "negativeExamples": [
+                "Graphic era"
+            ],
+            "groundTruth": "contain(concat(<g>,<e>))"
+        },
+        {
+            "positiveExamples": [
+                "1.0",
+                "100.1",
+                "123456789123456789.2",
+                "123456789123456789"
+            ],
+            "negativeExamples": [
+                "1.01",
+                "1234567891234567891",
+                "1234567891234567891.0"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,18),optional(concat(<.>,<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "2X",
+                "X",
+                "3123X",
+                "23X^6",
+                "23X^66"
+            ],
+            "negativeExamples": [
+                "X^",
+                "4",
+                "foobar",
+                "4X^",
+                "4X44",
+                " X"
+            ],
+            "groundTruth": "concat(star(<num>),concat(<X>,optional(concat(<^>,repeatatleast(<num>,1)))))"
+        },
+        {
+            "positiveExamples": [
+                "(0.4545 && 0.567) || 456",
+                "0.456 && 0.567"
+            ],
+            "negativeExamples": [
+                "9876-5-4321",
+                "9876-5-4321 (attack)",
+                "(0.4545 && 0.567) || 456 && (me)"
+            ],
+            "groundTruth": "repeatatleast(or(<num>,or(<&>,or(<|>,or(<.>,or(<(>,or(<)>,< >)))))),1)"
+        },
+        {
+            "positiveExamples": [
+                "123",
+                "1_23",
+                "123_4567_89_312_575",
+                "12",
+                "1_1_1"
+            ],
+            "negativeExamples": [
+                "123_",
+                "_123",
+                "123__12",
+                "_",
+                "abc",
+                "3_____4",
+                "1__1"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),star(concat(<_>,repeatatleast(<num>,1))))"
+        },
+        {
+            "positiveExamples": [
+                "028938"
+            ],
+            "negativeExamples": [
+                "DEF567987"
+            ],
+            "groundTruth": "repeat(<num>,6)"
+        },
+        {
+            "positiveExamples": [
+                "(501) 555 1234",
+                "(501)-555.1234",
+                "501-555-1234",
+                "501.555.1234",
+                "501 555 1234",
+                "501) 343-2233",
+                "(501 343-2233",
+                "(501. 343-2233",
+                "5013432233",
+                "800-..555-1234",
+                "-(.8005551234"
+            ],
+            "negativeExamples": [
+                "*-(.8005551234",
+                "501*555-1234",
+                "-(.80055512 41",
+                "501_555_1234",
+                "555-1234",
+                "800-...........555-1234",
+                "013432233"
+            ],
+            "groundTruth": "and(repeatrange(<any>,10,15),concat(star(or(<(>,or(<)>,or(< >,or(<.>,<->))))),concat(repeat(<num>,3),concat(star(or(<(>,or(<)>,or(< >,or(<.>,<->))))),concat(repeat(<num>,3),concat(star(or(<(>,or(<)>,or(< >,or(<.>,<->))))),repeat(<num>,4)))))))\n\n// visual format\nand(R1,concat(concat(R2,repeat(<num>,3)),concat(concat(R2,repeat(<num>,3)),concat(R2,repeat(<num>,4)))))"
+        },
+        {
+            "positiveExamples": [
+                "abc.def"
+            ],
+            "negativeExamples": [
+                "abc.fgh.ijk",
+                "abc.m.nop.pqrs"
+            ],
+            "groundTruth": "concat(concat(<a>,concat(<b>,<c>)),concat(<.>,repeatatleast(<let>,1)))"
+        },
+        {
+            "positiveExamples": [
+                "10.000,50",
+                "10,000.50",
+                ""
+            ],
+            "negativeExamples": [
+                "anything@!#--",
+                "a.2",
+                "2,a"
+            ],
+            "groundTruth": "star(or(<num>,or(<.>,<,>)))"
+        },
+        {
+            "positiveExamples": [
+                "2",
+                "2 + 3",
+                "2 + 3 + 4"
+            ],
+            "negativeExamples": [
+                "2+3",
+                "2 +3",
+                "2 + 3 +",
+                "2 + 3+ 4"
+            ],
+            "groundTruth": "concat(<num>,star(concat(concat(< >,concat(<+>,< >)),<num>)))"
+        },
+        {
+            "positiveExamples": [
+                "4",
+                "10.25",
+                "15.3",
+                "29.99",
+                "30"
+            ],
+            "negativeExamples": [
+                "30.01"
+            ],
+            "groundTruth": "and(not(<0>),or(concat(concat(<3>,<0>),optional(concat(<.>,repeatrange(<0>,1,2)))),concat(optional(or(<1>,<2>)),concat(<num>,optional(concat(<.>,repeatrange(<num>,1,2)))))))"
+        },
+        {
+            "positiveExamples": [
+                "01",
+                "02",
+                "03",
+                "04",
+                "05",
+                "06",
+                "07",
+                "08",
+                "09",
+                "10",
+                "11",
+                "12"
+            ],
+            "negativeExamples": [
+                "1",
+                "00",
+                "13"
+            ],
+            "groundTruth": "or(concat(<0>,<num1-9>),concat(<1>,or(<0>,or(<1>,<2>))))"
+        },
+        {
+            "positiveExamples": [
+                "FooBar123!"
+            ],
+            "negativeExamples": [
+                "foobar123!",
+                "FooBar123",
+                "F0bar! F0bar!",
+                "Fo0*"
+            ],
+            "groundTruth": "and(repeatatleast(<any>,6),and(not(contain(< >)),and(contain(<num>),and(contain(<cap>),and(contain(<low>),contain(or(<!>,or(<@>,or(<#>,or(<$>,or(<%>,or(<^>,or(<&>,or(<*>,or(<(>,or(<)>,or(<_>,<.>)))))))))))))))))"
+        },
+        {
+            "positiveExamples": [
+                "9999999999",
+                "9876543210"
+            ],
+            "negativeExamples": [
+                "999999999",
+                "1234567890",
+                "8912456789",
+                "qwe3456&ert",
+                "0123456789"
+            ],
+            "groundTruth": "and(repeat(<num>,10),startwith(<9>))"
+        },
+        {
+            "positiveExamples": [
+                "Mu*",
+                "*pa",
+                "*pa*"
+            ],
+            "negativeExamples": [
+                "*e*",
+                "*e*t",
+                "*e*t*",
+                "pa**"
+            ],
+            "groundTruth": "concat(optional(<*>),concat(repeatatleast(<let>,2),optional(<*>)))\n\n// visual format\nconcat(R1,concat(R2,R3))"
+        },
+        {
+            "positiveExamples": [
+                "12345678901",
+                "+1234567890"
+            ],
+            "negativeExamples": [
+                "+1234567890+",
+                "+123456789trtr",
+                "+trtr",
+                "+3435435435u"
+            ],
+            "groundTruth": "or(concat(optional(<+>),repeatrange(<num>,10,15)),repeatrange(<num>,11,16))"
+        },
+        {
+            "positiveExamples": [
+                "MAC Address=192.167.235.19",
+                "MAC Address=192.167.235.19;zproduct_id=XYZ"
+            ],
+            "negativeExamples": [
+                "MAC Address=192.167.235.19;",
+                "MAC =Address=192.167.235.19;zproduct_id=XYZ"
+            ],
+            "groundTruth": "concat(concat(repeatatleast(not(contain(or(<=>,<;>))),1),concat(<=>,repeatatleast(not(contain(or(<=>,<;>))),1))),star(concat(<;>,concat(repeatatleast(not(contain(or(<=>,<;>))),1),concat(<=>,repeatatleast(not(contain(or(<=>,<;>))),1))))))\n\n// visual format\nconcat(concat(R1,concat(<=>,R1)),star(concat(<;>,concat(R1,concat(<=>,R1)))))"
+        },
+        {
+            "positiveExamples": [
+                "123.1234567890",
+                "123.1234567890;123.1234567890;123.1234567890"
+            ],
+            "negativeExamples": [
+                "123.1234567890;",
+                "123.1234567890;123.1234567890;123.1234567890;"
+            ],
+            "groundTruth": "concat(concat(repeatatleast(<num>,1),concat(<.>,repeatatleast(<num>,1))),star(concat(<;>,concat(repeatatleast(<num>,1),concat(<.>,repeatatleast(<num>,1))))))"
+        },
+        {
+            "positiveExamples": [
+                "%ab",
+                "%ab%",
+                "%abcde",
+                "%abcde%",
+                "%abcdef%"
+            ],
+            "negativeExamples": [
+                "%",
+                "%%",
+                "%%%",
+                "%a%"
+            ],
+            "groundTruth": "concat(<%>,startwith(repeat(<let>,2)))"
+        },
+        {
+            "positiveExamples": [
+                "%sample1%_%sample2%",
+                "%sample2%%sample1%",
+                "1_abc",
+                "%sample2%%sample1%_%sample1%_%sample1%"
+            ],
+            "negativeExamples": [
+                "%sampleee1%"
+            ],
+            "groundTruth": "star(or(or(<let>,or(<num>,<_>)),or(concat(<%>,concat(<s>,concat(<a>,concat(<m>,concat(<p>,concat(<l>,concat(<e>,concat(<1>,<%>)))))))),concat(<%>,concat(<s>,concat(<a>,concat(<m>,concat(<p>,concat(<l>,concat(<e>,concat(<2>,<%>)))))))))))"
+        },
+        {
+            "positiveExamples": [
+                "4",
+                "5+1"
+            ],
+            "negativeExamples": [
+                "0",
+                "0-9",
+                "1+11"
+            ],
+            "groundTruth": "concat(or(<num1-9>,concat(<1>,<0>)),optional(concat(<+>,or(<num1-9>,concat(<1>,<0>)))))\n\n// visual format\nor(R1,concat(R1,concat(<+>,R1)))"
+        },
+        {
+            "positiveExamples": [
+                "A new description.",
+                "A < new description.",
+                "it< doesn't match"
+            ],
+            "negativeExamples": [
+                "A <new description.",
+                "it <matches",
+                "<n"
+            ],
+            "groundTruth": "not(contain(concat(<<>,notcc(< >))))"
+        },
+        {
+            "positiveExamples": [
+                "{foo}",
+                "{bar}",
+                "{nice}"
+            ],
+            "negativeExamples": [
+                "\\{notgood}",
+                "\\{bad}"
+            ],
+            "groundTruth": "startwith(<{>)"
+        },
+        {
+            "positiveExamples": [
+                "Test",
+                "Test abc"
+            ],
+            "negativeExamples": [
+                "Test abc def",
+                "Test  abc"
+            ],
+            "groundTruth": "concat(repeatatleast(<let>,1),optional(concat(< >,repeatatleast(<let>,1))))"
+        },
+        {
+            "positiveExamples": [
+                "123456789.123",
+                "123456789123456.12",
+                "12345.1",
+                "123456789123456",
+                "4",
+                "452"
+            ],
+            "negativeExamples": [
+                "1234567891234567",
+                "123.1234",
+                "1.12345",
+                ".1234"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,15),optional(concat(<.>,repeatrange(<num>,1,3))))"
+        },
+        {
+            "positiveExamples": [
+                "safename",
+                "123",
+                "there-is-something-here",
+                "your-name-goes-here",
+                "a-b",
+                "a-bc-d",
+                "ab-cd-e",
+                "a-bc-de",
+                "this-is-a-test",
+                "a-b-c",
+                "1-2-3"
+            ],
+            "negativeExamples": [
+                "1-2-",
+                "-something-is-up",
+                "say-what-"
+            ],
+            "groundTruth": "and(and(repeatatleast(or(or(<let>,<num>),<->),1),not(startwith(<->))),not(endwith(<->)))"
+        },
+        {
+            "positiveExamples": [
+                "A",
+                "A@",
+                "@A",
+                "A@a@",
+                "@@@a"
+            ],
+            "negativeExamples": [
+                "@",
+                "@#",
+                "a:**",
+                "A@%"
+            ],
+            "groundTruth": "and(contain(<alphanum>),and(repeatatleast(or(<alphanum>,or(<@>,<#>)),1),repeatrange(<any>,1,8)))"
+        },
+        {
+            "positiveExamples": [
+                "215-121-1247"
+            ],
+            "negativeExamples": [
+                "8059311142",
+                "805 931 42ab",
+                "105 931 4288"
+            ],
+            "groundTruth": "concat(concat(repeat(<num>,3),<->),concat(repeat(<num>,3),concat(<->,repeat(<num>,4))))\n\n// visual format\nconcat(concat(repeat(R1,3),<->),concat(repeat(R1,3),concat(<->,repeat(R1,4))))"
+        },
+        {
+            "positiveExamples": [
+                "1,234",
+                "1,23",
+                "1,2",
+                "1"
+            ],
+            "negativeExamples": [
+                "1,2345",
+                "A",
+                " ",
+                "",
+                "1.234"
+            ],
+            "groundTruth": "concat(repeatatleast(<num>,1),optional(concat(<,>,repeatrange(<num>,1,3))))"
+        },
+        {
+            "positiveExamples": [
+                "A111B2_3_.exe"
+            ],
+            "negativeExamples": [
+                "A111B2_3_0.exe"
+            ],
+            "groundTruth": "concat(<A>,concat(<B>,concat(or(<1>,or(<2>,or(<3>,or(<4>,or(<5>,<6>))))),concat(<_>,concat(<num>,concat(<_>,concat(optional(<num1-9>),concat(<.>,concat(<e>,concat(<x>,<e>))))))))))\n\n// visual format\nconcat(concat(<A>,concat(R1,concat(<B>,concat(R2,<_>)))),concat(R3,concat(<_>,R4)))"
+        },
+        {
+            "positiveExamples": [
+                "0.125",
+                "1.15",
+                "0.5",
+                "12345",
+                "54321"
+            ],
+            "negativeExamples": [
+                "1.1234",
+                "0",
+                "0.0",
+                "00"
+            ],
+            "groundTruth": "and(concat(repeatrange(<num>,1,4),optional(concat(<.>,repeatrange(<num>,1,3)))),not(repeatatleast(or(<0>,<.>),1)))"
+        },
+        {
+            "positiveExamples": [
+                "1,2,3",
+                "111,234234,-09",
+                "1",
+                "1,2",
+                "2,-3",
+                "3,4,5",
+                "-1,3",
+                "123,12"
+            ],
+            "negativeExamples": [
+                "121as23",
+                "123-123",
+                "123,123,aasd",
+                "12,12asd"
+            ],
+            "groundTruth": "concat(concat(optional(<->),repeatatleast(<num>,1)),star(concat(<,>,concat(optional(<->),repeatatleast(<num>,1)))))"
+        },
+        {
+            "positiveExamples": [
+                "Abc 20 Jan to 15 Dec",
+                "hello world"
+            ],
+            "negativeExamples": [
+                "123 abc"
+            ],
+            "groundTruth": "concat(<let>,repeatatleast(or(< >,<alphanum>),1))"
+        },
+        {
+            "positiveExamples": [
+                "123 45"
+            ],
+            "negativeExamples": [
+                "123456",
+                "123 4"
+            ],
+            "groundTruth": "concat(repeat(<num>,3),concat(< >,repeat(<num>,2)))"
+        },
+        {
+            "positiveExamples": [
+                "abcd",
+                "ab_cd",
+                "a_b_cd",
+                "%*##_@+"
+            ],
+            "negativeExamples": [
+                "ab__cd",
+                "a_b__Cd"
+            ],
+            "groundTruth": "not(contain(repeat(<_>,2)))"
+        },
+        {
+            "positiveExamples": [
+                "Sunil Kumar"
+            ],
+            "negativeExamples": [
+                "Sunil Kumar 123",
+                "SUnil Kumar",
+                "Sunil  Kumar"
+            ],
+            "groundTruth": "concat(concat(<cap>,repeatatleast(<low>,1)),concat(< >,concat(<cap>,repeatatleast(<low>,1))))"
+        },
+        {
+            "positiveExamples": [
+                "1",
+                "1111",
+                "2222.56",
+                "9999.55",
+                "0.99",
+                "9999.5"
+            ],
+            "negativeExamples": [
+                "88888",
+                "8.888",
+                "99999 ",
+                "9.369"
+            ],
+            "groundTruth": "concat(repeatrange(<num>,1,4),optional(concat(or(<.>,<,>),repeatrange(<num>,1,2))))"
+        }
+    ]
+}
