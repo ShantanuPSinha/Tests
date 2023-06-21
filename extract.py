@@ -195,9 +195,6 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
                 if examples == None:
                     continue
 
-                # if (datasetExtractor == golfExtractor):
-                #     print (os.listdir(path_to_dir))
-
                 elif (datasetExtractor == extractCSV):
                     assert isinstance(examples, list)
                     for _ in range(int(len(examples) / 2)):
@@ -232,13 +229,12 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
     return dataset
 
 
-
 Rfixer = convert_dataset_to_json ("/home/shantanu/duality/RFixer/tests", dataset_name="RFixer", dataset_description="Examples from the RFixer Repository Dataset. The repository dataset was collected from multiple sources including Rebele and AutoTutor", datasetExtractor=rfixerExtractor, outfilename="rfixer_dataset.json")
 autoTutor = convert_dataset_to_json ("/home/shantanu/duality/RFixer/tests/clean_AutoTutorWithTrue/", dataset_name="AutoTutor", dataset_description="Examples from Automata Tutor. Data extracted from the RFixer Repository", datasetExtractor=extractAutoTutorTrue, outfilename="automata_tutor.json")
 llmCSV = convert_dataset_to_json ("/home/shantanu/duality/llm-regex-prompting/Example Sheets", dataset_name="CSVFiles", dataset_description="CSV Files used for LLM Prompting", datasetExtractor=extractCSV, outfilename="LLMPromptCSV.json")
 deepRegex = convert_dataset_to_json ("/home/shantanu/duality/regel/exp/deepregex/benchmark", dataset_name="DeepRegex", dataset_description="Examples from DeepRegex. Data extracted from the Regel Repository", datasetExtractor=extractRegel, outfilename="DeepRegex.json")
 stackOverflow = convert_dataset_to_json ("/home/shantanu/duality/regel/exp/so/benchmark", dataset_name="SO", dataset_description="Examples from StackOverflow. Data extracted from the Regel Repository", datasetExtractor=extractRegel, outfilename="StackOverflow.json")
-golf = convert_dataset_to_json("/home/shantanu/duality/regex-golf/instances/", dataset_name="Golf", dataset_description="Examples from Golf", datasetExtractor=golfExtractor, outfilename="golf.json")
+golf = convert_dataset_to_json(["/home/shantanu/duality/regex-golf/instances/", "/home/shantanu/duality/regex-golf/instances.ours/"], dataset_name="Golf", dataset_description="Examples from Golf", datasetExtractor=golfExtractor, outfilename="golf.json")
 
 with open("Datasets/dataset.json", "w") as json_file:
     json.dump({ "Datasets": [Rfixer, autoTutor, llmCSV, deepRegex, stackOverflow, golf] }, json_file, indent=4)
