@@ -1,4 +1,5 @@
 import json
+import jsonschema
 import os
 
 class datasetInterface:
@@ -19,6 +20,7 @@ class datasetInterface:
     def __init__(self, file_name):
         self.file_name = file_name
         self.data = self.read_data()
+        self.validateJSON()
         self.current_index = 0
 
     def read_data(self):
@@ -73,9 +75,9 @@ class datasetInterface:
 
         """
 
-        assert (isinstance(dataset_name, str), "Dataset Name needs to be a string")
-        assert (isinstance(description, str), "Dataset Description needs to be a string")
-        assert (isinstance(tasks, list), "Tasks needs to be a list of Tasks")
+        assert isinstance(dataset_name, str)   # "Dataset Name needs to be a string"
+        assert isinstance(description, str)    # "Dataset Description needs to be a string"
+        assert isinstance(tasks, list)         # "Tasks needs to be a list of Tasks"
 
         entry = {}
         entry["Dataset Name"] = dataset_name
@@ -255,5 +257,149 @@ class datasetInterface:
             for task in dataset.get("Tasks", []):
                 yield task
 
+
+    def validate_schema_individual(self):
+        """
+        Validates the individual dataset schema.
+
+        Returns:
+            bool: True if the schema is valid, False otherwise.
+        """
+        individual_dataset_schema = {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "object",
+            "properties": {
+                "Dataset Name": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Tasks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "positiveExamples": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "negativeExamples": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "groundTruth": {
+                                "type": ["array", "string"]
+                            }
+                        },
+                        "required": [
+                            "groundTruth",
+                            "negativeExamples",
+                            "positiveExamples"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "Dataset Name",
+                "Description",
+                "Tasks"
+            ]
+        }
+
+        try:
+            jsonschema.validate(self.data, individual_dataset_schema)
+            return True
+        except jsonschema.ValidationError:
+            return False
+
+    def validate_schema_dataset(self):
+        """
+        Validates the dataset schema.
+
+        Returns:
+            bool: True if the schema is valid, False otherwise.
+        """
+        bigDatasetSchema = {
+            "type": "object",
+            "properties": {
+                "Datasets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "Dataset Name": {
+                                "type": "string"
+                            },
+                            "Description": {
+                                "type": "string"
+                            },
+                            "Tasks": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "positiveExamples": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "negativeExamples": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "groundTruth": {
+                                            "type": [
+                                                "array",
+                                                "string"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "groundTruth",
+                                        "negativeExamples",
+                                        "positiveExamples"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "Dataset Name",
+                            "Description",
+                            "Tasks"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "Datasets"
+            ]
+        }
+
+        try:
+            jsonschema.validate(self.data, bigDatasetSchema)
+            return True
+        except jsonschema.ValidationError:
+            return False
+
+    def validateJSON(self):
+        """
+        Validates the dataset against two schemas.
+
+        Raises:
+            AssertionError: If the dataset schema is invalid.
+        """
+        if self.validate_schema_dataset() or self.validate_schema_individual():
+            return
+
+        raise AssertionError("Invalid Dataset Schema")
+    
 
 __all__ = ["datasetInterface"]
