@@ -35,7 +35,8 @@ class datasetInterface:
 
     def save_data(self):
         """
-        Save the dataset data to the JSON file.
+        Save the dataset data to the same JSON file.
+        WARNING: MODIFIES THE ORIGINAL DATASET FILE
 
         Returns:
             None
@@ -46,7 +47,7 @@ class datasetInterface:
 
     def write_data(self, outfilename="Dataset_test.json"):
         """
-        Write the dataset data to a JSON file.
+        Write the dataset data to a different JSON file.
 
         Args:
             outfilename (str, optional): The name of the output JSON file. Defaults to "Dataset_test.json".
@@ -58,7 +59,7 @@ class datasetInterface:
         with open(outfilename, 'w') as file:
             json.dump(self.data, file, indent=4)
 
-    def add_dataset(self, dataset_name, description, tasks):
+    def add_dataset(self, dataset_name = None, description = "", tasks = []):
         """
         Add a new dataset entry to the dataset data.
 
@@ -71,6 +72,11 @@ class datasetInterface:
             None
 
         """
+
+        assert (isinstance(dataset_name, str), "Dataset Name needs to be a string")
+        assert (isinstance(description, str), "Dataset Description needs to be a string")
+        assert (isinstance(tasks, list), "Tasks needs to be a list of Tasks")
+
         entry = {}
         entry["Dataset Name"] = dataset_name
         entry["Description"] = description
@@ -216,6 +222,8 @@ class datasetInterface:
         with open(task_dir + "/right.txt", 'w') as outfile:
             outfile.write('\n'.join(negative_examples))
 
+    
+
     def get_dataset(self, dataset_name):
         """
         Retrieve the tasks associated with a specific dataset.
@@ -234,31 +242,10 @@ class datasetInterface:
         return None
 
     
-    
-    def get_all_tasks(self):
+
+    def tasks (self):
         """
-        Get all tasks across every dataset.
-
-        Returns:
-            list: A list containing all the tasks from every dataset.
-        """
-        all_tasks = []
-
-        for dataset in self.data.get("Datasets", []):
-            tasks = dataset.get("Tasks", [])
-            all_tasks.extend(tasks)
-
-        return all_tasks
-    
-    def add_field (self, key, value=""):
-        for task in self.task_iterator():
-                task[key] = value
-        
-        self.write_data ("temp.json")
-
-    def task_iterator(self):
-        """
-        Iterate over every task in every dataset.
+        Iterate over every task in every dataset. Get all tasks across every dataset.
 
         Yields:
             dict: A task dictionary containing positiveExamples, negativeExamples, and groundTruth.
@@ -268,6 +255,5 @@ class datasetInterface:
             for task in dataset.get("Tasks", []):
                 yield task
 
-    
 
 __all__ = ["datasetInterface"]

@@ -133,6 +133,7 @@ def extractAutoTutorTrue(file_path):
     return pos_list, neg_list, gt[0]
 
 
+
 def golfExtractor(path_to_golf_dir):
     if not os.path.isdir(path_to_golf_dir):
         print(
@@ -146,6 +147,8 @@ def golfExtractor(path_to_golf_dir):
         neg_list = f.read().split("\n")
 
     return pos_list, neg_list
+
+
 
 
 def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, datasetExtractor, outfilename="dataset.json"):
