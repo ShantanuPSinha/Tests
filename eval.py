@@ -1,14 +1,24 @@
 import os
 import subprocess
 import re
-import json
-import csv
+from interface import datasetInterface
+import shutil
 
 RFixerDir = os.getenv('RFIXER_DIR') or '/home/shantanu/duality/RFixer'
 
 def runRFixer (path_to_testFile):
-  rfixerProc = subprocess.run(['java', '-jar', '/home/shantanu/duality/RFixer/target/regfixer.jar', '--mode', '1', 'fix', '--file', path_to_testFile], capture_output=True, cwd=RFixerDir)
-  rfixerProc.check_returncode()
+  return None
+  try:
+    rfixerProc = subprocess.run(['java', '-jar', '/home/shantanu/duality/RFixer/target/regfixer.jar', '--mode', '1', 'fix', '--file', path_to_testFile], capture_output=True, cwd=RFixerDir, timeout=60)
+  except:
+    return None
+
+  
+  try:
+    rfixerProc.check_returncode()
+  except:
+    print (f"Error Running {path_to_testFile}. Continuing")
+    return None
   testOutput = rfixerProc.stdout.decode('utf-8')
 
   # print (testOutput)
@@ -53,3 +63,26 @@ def calc_accuracy (positive_examples, negative_examples, regex):
   total = len(positive_examples) + len(negative_examples)
   return score / total
 
+
+if __name__ == "__main__":
+  os.makedirs ("rfixer_tests", exist_ok=True)
+  i = 0
+
+  interface = datasetInterface('/home/shantanu/duality/eval-RFixer/Datasets/dataset.json')
+  for task in interface.task_iterator():
+    testfile = f"/home/shantanu/duality/eval-RFixer/rfixer_tests/test{i}"
+    # print (f"Running {i}")
+    interface.generate_rfixer_testcase (testfile, task)
+    rfixerAttempt = runRFixer (testfile)
+
+    if rfixerAttempt == None:
+      rfixerAttempt = "RFixer Error"
+
+    task["rfixerAttempt"] = rfixerAttempt
+    task["testIndex"] = i
+    i = i + 1
+
+    # interface.write_data ("Eval-Rfixer.json")
+
+  interface.write_data ("Eval-Rfixer.json")
+  shutil.rmtree("/home/shantanu/duality/eval-RFixer/rfixer_tests/", ignore_errors=True)
