@@ -1,6 +1,13 @@
+"""
+Interface for interacting a with JSON dataset
+"""
+
+# Shantanu Sinha
+
 import json
 import jsonschema
 import os
+
 
 class datasetInterface:
     """
@@ -14,10 +21,10 @@ class datasetInterface:
         data (dict): The dataset data loaded from the JSON file.
 
     Methods:
-        read_data():
+        TODO
 
     """
-    def __init__(self, file_name):
+    def __init__(self, file_name : str):
         self.file_name = file_name
         self.data = self.read_data()
         self.validateJSON()
@@ -61,7 +68,7 @@ class datasetInterface:
         with open(outfilename, 'w') as file:
             json.dump(self.data, file, indent=4)
 
-    def add_dataset(self, dataset_name = None, description = "", tasks = []):
+    def add_dataset(self, dataset_name : str, description = "", tasks = []):
         """
         Add a new dataset entry to the dataset data.
 
@@ -75,10 +82,6 @@ class datasetInterface:
 
         """
 
-        assert isinstance(dataset_name, str)   # "Dataset Name needs to be a string"
-        assert isinstance(description, str)    # "Dataset Description needs to be a string"
-        assert isinstance(tasks, list)         # "Tasks needs to be a list of Tasks"
-
         entry = {}
         entry["Dataset Name"] = dataset_name
         entry["Description"] = description
@@ -86,7 +89,7 @@ class datasetInterface:
 
         self.data["Datasets"].append(entry)
 
-    def add_tasks(self, dataset_name, positive_examples, negative_examples, ground_truth=""):
+    def add_tasks(self, dataset_name:str, positive_examples:list, negative_examples:list, ground_truth=""):
         """
         Add tasks to an existing dataset.
 
@@ -133,7 +136,7 @@ class datasetInterface:
         return dataset_names
 
     
-    def get_task (self, dataset_name, index=0, num_tasks=1):
+    def get_task (self, dataset_name:str, index=0, num_tasks=1):
         """
         Get task(s) from a specific dataset.
 
@@ -180,7 +183,7 @@ class datasetInterface:
 
         return None
 
-    def generate_rfixer_testcase (self, outfilepath, task):
+    def generate_rfixer_testcase (self, outfilepath:str, task):
         """
         Generate an RFixer testcase file.
 
@@ -226,7 +229,7 @@ class datasetInterface:
 
     
 
-    def get_dataset(self, dataset_name):
+    def get_dataset(self, dataset_name:str):
         """
         Retrieve the tasks associated with a specific dataset.
 
@@ -400,6 +403,26 @@ class datasetInterface:
             return
 
         raise AssertionError("Invalid Dataset Schema")
+    
+
+    def search_by_gt (self, gt:str):
+        """
+        Find tasks in the dataset that match a given ground truth value.
+
+        Args:
+            gt: The ground truth value to search for. Ground Truth must be a string. If you have an array of Ground Truth values, search one-by-one
+
+        Returns:
+            list: A list of tasks that match the given ground truth value.
+
+        """
+
+        matching_tasks = []
+
+        for task in self.tasks():
+            if task.get("groundTruth") == gt:
+                matching_tasks.append(task)
+        return matching_tasks
     
 
 __all__ = ["datasetInterface"]

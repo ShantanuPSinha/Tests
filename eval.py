@@ -68,9 +68,9 @@ if __name__ == "__main__":
   os.makedirs ("rfixer_tests", exist_ok=True)
   i = 0
 
-  interface = datasetInterface('/home/shantanu/duality/eval-RFixer/Datasets/dataset.json')
+  interface = datasetInterface('/home/shantanu/duality/Datasets/dataset.json')
   for task in interface.task_iterator():
-    testfile = f"/home/shantanu/duality/eval-RFixer/rfixer_tests/test{i}"
+    testfile = f"/home/shantanu/duality/python-utils/rfixer_tests/test{i}"
     # print (f"Running {i}")
     interface.generate_rfixer_testcase (testfile, task)
     rfixerAttempt = runRFixer (testfile)
@@ -85,4 +85,4 @@ if __name__ == "__main__":
     # interface.write_data ("Eval-Rfixer.json")
 
   interface.write_data ("Eval-Rfixer.json")
-  shutil.rmtree("/home/shantanu/duality/eval-RFixer/rfixer_tests/", ignore_errors=True)
+  shutil.rmtree("/home/shantanu/duality/python-utils/rfixer_tests/", ignore_errors=True)
