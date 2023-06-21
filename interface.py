@@ -134,9 +134,74 @@ class datasetInterface:
         for dataset in self.data["Datasets"]:
             dataset_names.append(dataset["Dataset Name"])
         return dataset_names
+    
+
+    #  def get_task(self, *args, **kwargs):
+    #      dataset = None
+#  
+    #      if self.validate_schema_dataset():
+    #          if len(args) > 0:
+    #              kwargs['dataset_name'] = args[0]
+    #          if len(args) > 1:
+    #              kwargs['index'] = args[1]
+    #          if len(args) > 2:
+    #              kwargs['num_tasks'] = args[2]
+#  
+    #          dataset_name = kwargs.get('dataset_name')
+    #          index = kwargs.get('index', 0)
+    #          num_tasks = kwargs.get('num_tasks', 1)
+#  
+    #          
+    #          for sel in self.data.get("Datasets", []):
+    #              if sel.get("Dataset Name") == dataset_name:
+    #                  dataset = sel
+    #                  break
+#  
+    #          if dataset is None:
+    #              return None
+    #          
+    #      elif len(args) == 2:
+    #          dataset_name = None
+    #          index = args[0]
+    #          num_tasks = args[1]
+    #          dataset = self.data
+#  
+    #      else:
+    #          raise AssertionError("Missing Dataset Name")
+    #      
+    #      if num_tasks < 1 or index < 0:
+    #              return None
+#  
+#  
+    #      tasks = dataset.get("Tasks", [])
+    #      tasks_count = len(tasks)
+#  
+    #      if index >= tasks_count:
+    #          return None
+#  
+    #      end_index = min(index + num_tasks, tasks_count)
+    #      tasks = tasks[index:end_index]
+#  
+    #      if num_tasks == 1:
+    #          task = tasks[0]
+    #          return (
+    #              task.get("positiveExamples", []),
+    #              task.get("negativeExamples", []),
+    #              task.get("groundTruth", [])
+    #          )
+#  
+    #      task_tuples = []
+    #      for task in tasks:
+    #          positive_examples = task.get("positiveExamples", [])
+    #          negative_examples = task.get("negativeExamples", [])
+    #          ground_truth = task.get("groundTruth", [])
+    #          task_tuples.append((positive_examples, negative_examples, ground_truth))
+#  
+    #      return task_tuples
+#  
 
     
-    def get_task (self, dataset_name:str, index=0, num_tasks=1):
+    def get_task (self, dataset_name=None, index=0, num_tasks=1):
         """
         Get task(s) from a specific dataset.
 
@@ -153,35 +218,53 @@ class datasetInterface:
 
         if num_tasks < 1 or index < 0:
             return None
+        
+        dataset = None
 
-        for dataset in self.data.get("Datasets", []):
-            if dataset.get("Dataset Name") == dataset_name:
-                tasks = dataset.get("Tasks", [])
-                tasks_count = len(tasks)
-                if index >= tasks_count:
-                    return None
+        if self.validate_schema_dataset():
+            if not isinstance (dataset_name, str):
+                raise AssertionError ("Missing Dataset Name")
+            for sel in self.data.get("Datasets", []):
+                if sel.get("Dataset Name") == dataset_name:
+                    dataset = sel
+                    break
 
-                end_index = min(index + num_tasks, tasks_count)
-                tasks = tasks[index:end_index]
+            if dataset == None:
+                return None
+        
+        else:
+            # I know *args and **kwargs exist
+            # This is how I choose to do it
+            # Sue me
+            num_tasks = index
+            index = int(dataset_name)
+            dataset = self.data
+                    
+        tasks = dataset.get("Tasks", [])
+        tasks_count = len(tasks)
 
-                if num_tasks == 1:
-                    task = tasks[0]
-                    return ([
-                        task.get("positiveExamples", []),
-                        task.get("negativeExamples", []),
-                        task.get("groundTruth", [])
-                    ])
+        if index >= tasks_count:
+            return None
 
-                task_tuples = []
-                for task in tasks:
-                    positive_examples = task.get("positiveExamples", [])
-                    negative_examples = task.get("negativeExamples", [])
-                    ground_truth = task.get("groundTruth", [])
-                    task_tuples.append((positive_examples, negative_examples, ground_truth))
+        end_index = min(index + num_tasks, tasks_count)
+        tasks = tasks[index:end_index]
 
-                return task_tuples
+        if num_tasks == 1:
+            task = tasks[0]
+            return ([
+                task.get("positiveExamples", []),
+                task.get("negativeExamples", []),
+                task.get("groundTruth", [])
+            ])
 
-        return None
+        task_tuples = []
+        for task in tasks:
+            positive_examples = task.get("positiveExamples", [])
+            negative_examples = task.get("negativeExamples", [])
+            ground_truth = task.get("groundTruth", [])
+            task_tuples.append((positive_examples, negative_examples, ground_truth))
+
+        return task_tuples
 
     def generate_rfixer_testcase (self, outfilepath:str, task):
         """
@@ -256,9 +339,15 @@ class datasetInterface:
             dict: A task dictionary containing positiveExamples, negativeExamples, and groundTruth.
 
         """
-        for dataset in self.data.get("Datasets", []):
-            for task in dataset.get("Tasks", []):
+        if self.validate_schema_dataset():
+            for dataset in self.data.get("Datasets", []):
+                for task in dataset.get("Tasks", []):
+                    yield task
+
+        else:
+            for task in self.data.get("Tasks", []):
                 yield task
+            
 
 
     def validate_schema_individual(self):
@@ -423,6 +512,6 @@ class datasetInterface:
             if task.get("groundTruth") == gt:
                 matching_tasks.append(task)
         return matching_tasks
-    
+
 
 __all__ = ["datasetInterface"]
