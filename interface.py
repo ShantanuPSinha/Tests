@@ -1,3 +1,4 @@
+#! usr/bin/python3
 """
 Interface for interacting a with JSON dataset
 """
@@ -25,10 +26,15 @@ class datasetInterface:
 
     """
     def __init__(self, file_name : str):
+        
+        if not os.path.isfile(file_name):
+            raise FileNotFoundError
+
         self.file_name = file_name
+        self.bigSchema : bool
+
         self.data = self.read_data()
         self.validateJSON()
-        self.current_index = 0
 
     def read_data(self):
         """
@@ -201,14 +207,14 @@ class datasetInterface:
 #  
 
     
-    def get_task (self, dataset_name=None, index=0, num_tasks=1):
+    def get_task (self, num_tasks:int, index:int, dataset_name=None):
         """
         Get task(s) from a specific dataset.
 
         Args:
+            num_tasks (int): The number of tasks to retrieve.
+            index (int): The starting index from which to begin getting the task. Negative indexes not supported
             dataset_name (str): The name of the dataset to retrieve the task(s) from.
-            index (int, optional): The starting index of the task(s) to retrieve. Defaults to 0.
-            num_tasks (int, optional): The number of tasks to retrieve. Defaults to 1.
 
         Returns:
             list or tuple or None:  If a single task is retrieved, a tuple containing positive examples, negative examples, and ground truth is returned.
@@ -216,30 +222,30 @@ class datasetInterface:
                                     If no tasks are found or invalid input is provided, None is returned.
         """
 
-        if num_tasks < 1 or index < 0:
-            return None
-        
+        assert (isinstance (num_tasks, int))
+        assert (isinstance (index, int))
         dataset = None
 
-        if self.validate_schema_dataset():
+        if num_tasks < 1:
+            return None
+        
+        if index < 0:
+            raise ValueError ("Negetive Indexing Not Supported")
+
+        if self.bigSchema:
             if not isinstance (dataset_name, str):
-                raise AssertionError ("Missing Dataset Name")
+                raise AssertionError ("Missing Dataset Name. Must be a String")
             for sel in self.data.get("Datasets", []):
                 if sel.get("Dataset Name") == dataset_name:
                     dataset = sel
                     break
 
             if dataset == None:
-                return None
-        
+                raise AttributeError ("Dataset Not Found")    
+    
         else:
-            # I know *args and **kwargs exist
-            # This is how I choose to do it
-            # Sue me
-            num_tasks = index
-            index = int(dataset_name)
             dataset = self.data
-                    
+
         tasks = dataset.get("Tasks", [])
         tasks_count = len(tasks)
 
@@ -266,6 +272,7 @@ class datasetInterface:
 
         return task_tuples
 
+    
     def generate_rfixer_testcase (self, outfilepath:str, task):
         """
         Generate an RFixer testcase file.
@@ -405,10 +412,12 @@ class datasetInterface:
 
         try:
             jsonschema.validate(self.data, individual_dataset_schema)
+            self.bigSchema = False
             return True
         except jsonschema.ValidationError:
             return False
 
+    
     def validate_schema_dataset(self):
         """
         Validates the dataset schema.
@@ -477,10 +486,12 @@ class datasetInterface:
 
         try:
             jsonschema.validate(self.data, bigDatasetSchema)
+            self.bigSchema = True
             return True
         except jsonschema.ValidationError:
             return False
 
+    
     def validateJSON(self):
         """
         Validates the dataset against two schemas.
@@ -512,6 +523,5 @@ class datasetInterface:
             if task.get("groundTruth") == gt:
                 matching_tasks.append(task)
         return matching_tasks
-
 
 __all__ = ["datasetInterface"]

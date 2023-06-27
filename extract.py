@@ -275,11 +275,24 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
                 elif datasetExtractor == extractCSV:
                     assert isinstance(examples, list)
                     while examples:
-                        pos_list = examples.pop(0)
-                        neg_list = examples.pop(0)
+                        pos_list = (examples.pop(0))
+                        neg_list = (examples.pop(0))
+                        
+                        # I HATE CSV FILES
+                        try:
+                            pos_list.remove('')
+                        except ValueError:
+                            pass
+                        
+                        try:
+                            neg_list.remove('')
+                        except ValueError:
+                            pass
+                        
+
                         dataset["Tasks"].append({
-                            "positiveExamples": pos_list,
-                            "negativeExamples": neg_list,
+                            "positiveExamples": ["" if x == "EMPTY_STRING" else x for x in pos_list], 
+                            "negativeExamples": ["" if x == "EMPTY_STRING" else x for x in neg_list],
                             "groundTruth": []
                         })
 
