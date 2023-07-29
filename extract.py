@@ -293,6 +293,7 @@ def convert_dataset_to_json(path_to_dirs, dataset_name, dataset_description, dat
                         dataset["Tasks"].append({
                             "positiveExamples": ["" if x == "EMPTY_STRING" else x for x in pos_list], 
                             "negativeExamples": ["" if x == "EMPTY_STRING" else x for x in neg_list],
+                            
                             "groundTruth": []
                         })
 
