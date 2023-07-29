@@ -3,6 +3,7 @@ import json
 from logger import init_logger, dump_error
 import os
 import re2 as re
+import argparse
 
 localhost_password = os.environ.get("PSQL_Password") or ''
 
@@ -35,9 +36,6 @@ def process_record(record : list):
     repo_metadata = record[8]
     
     if repo_metadata == {}:
-        logger.error(f"Package {record[2]} at id {record[0]} has no Repo Metadata. Possible Repo URLs - {record[6]} or {record[5]}")
-        dump_error (record)
-
         if package_repo == None:
             return None
     else:
@@ -60,7 +58,7 @@ def process_record(record : list):
         if package_name is None or package_owner_github is None:
             match = re.match(r"https?://(?:www\.)?(github|gitlab)\.com/([^/]+)/([^/]+)", package_repo)
             if match:
-                package_name = match.group(1)
+                package_name = match.group(3)
                 package_owner_github = match.group(2)
 
         return {
@@ -76,20 +74,36 @@ def process_record(record : list):
     return None
 
 def main():
-    init_logger()
+    parser = argparse.ArgumentParser(description="Extract package information based on the desired ecosystems.")
+    parser.add_argument('--maven', action='store_true', help="Extract packages for Maven ecosystem.")
+    parser.add_argument('--npm', action='store_true', help="Extract packages for npm ecosystem.")
+    parser.add_argument('--pypi', action='store_true', help="Extract packages for PyPI ecosystem.")
+    args = parser.parse_args()
 
+    ecosystems = [ecosystem for ecosystem in ['maven', 'npm', 'pypi'] if getattr(args, ecosystem)]
+
+    if not ecosystems:
+        # If no ecosystems are provided, prompt the user for input
+        user_input_ecosystem = input("Enter the ecosystem (maven, npm, or pypi): ").lower()
+        if user_input_ecosystem not in ['maven', 'npm', 'pypi']:
+            print("Invalid ecosystem. Please choose from 'maven', 'npm', or 'pypi'.")
+            return
+        ecosystems = [user_input_ecosystem]
+
+    for ecosystem in ecosystems:
+        process_ecosystem(ecosystem)
+
+
+def process_ecosystem(ecosystem):
+    print (f"Processing {ecosystem}...")
     conn = psycopg2.connect(**db_credentials)
-    cursor = conn.cursor()
+    cursor = conn.cursor(name="large_result_cursor")
+    
+    # Set the output filename based on the ecosystem
+    output_file = f"extracted/{ecosystem}_packages.ndjson"
 
-    # Ask user for the desired ecosystem
-    user_input_ecosystem = input("Enter the ecosystem (maven, npm, or pypi): ").lower()
-
-    # Validate user input
-    if user_input_ecosystem not in ['maven', 'npm', 'pypi']:
-        print("Invalid ecosystem. Please choose from 'maven', 'npm', or 'pypi'.")
-        cursor.close()
-        conn.close()
-        return
+    # List to store package information
+    packages_list = []
 
     # Construct the dynamic SQL query with parameterized query
     query = """
@@ -103,20 +117,17 @@ def main():
     """
 
     # Pass the user input as a tuple to cursor.execute
-    cursor.execute(query, (user_input_ecosystem,))
-    records = list(cursor.fetchall())
+    cursor.execute(query, (ecosystem,))
+    records = list(cursor.fetchmany(1000))
 
-    # Set the output filename based on user input
-    output_file = f"extracted/{user_input_ecosystem}_packages.ndjson"
+    while records:
+        for record in records:
+            package_info = process_record(record)
+            if package_info:
+                packages_list.append(package_info)
 
-    # List to store package information
-    packages_list = []
-
-    for record in records:
-        package_info = process_record(record)
-        if package_info:
-            packages_list.append(package_info)
-
+        records = list(cursor.fetchmany(1000))
+       
     # Write all packages to the output file
     with open(output_file, "w") as f:
         for package in packages_list:
@@ -125,6 +136,7 @@ def main():
 
     cursor.close()
     conn.close()
+
 
 # Call the main function to start the program
 if __name__ == "__main__":
