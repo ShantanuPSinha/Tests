@@ -1,6 +1,10 @@
 """
 Script for extracting Positive and Negative examples from various datasets
 and converting them to JSON files.
+
+
+# PATHS TO REPOS ARE ABSOLUTE
+
 """
 # Shantanu Sinha
 
