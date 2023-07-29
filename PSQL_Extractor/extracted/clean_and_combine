@@ -1,8 +1,17 @@
 #!/usr/bin/python3
 
+## Can Accept indeterminate amount of input files. Cleans it up and outputs to another output file
+##
+## If you want to exclude the Ecosystem field from the generated output json, change the 
+## bool to False
+
+## Example Usage ./combine_datasets maven_packages.ndjson pypi_packages.ndjson npm_packages.ndjson bell_output.ndjson
+
 import argparse
 import json
 import re2 as r
+
+include_ecosystem = True
 
 def convert_to_ndjson(input_files, output_file):
     combined_data = []
@@ -34,15 +43,25 @@ def convert_to_ndjson(input_files, output_file):
 
             language = data.get('package_language')
             valid = True
+            
+            if include_ecosystem:
+                final_json = {
+                    "name": name,
+                    "repo": repo,
+                    "license": license_info,
+                    "language": language,
+                    "valid": valid,
+                    "ecosystem": ecosys
+                }
 
-            final_json = {
-                "name": name,
-                "repo": repo,
-                "license": license_info,
-                "language": language,
-                "valid": valid,
-                "ecosystem": ecosys
-            }
+            else:
+                final_json = {
+                    "name": name,
+                    "repo": repo,
+                    "license": license_info,
+                    "language": language,
+                    "valid": valid,
+                }
 
             output.write(json.dumps(final_json) + "\n")
 
