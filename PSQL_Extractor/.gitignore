@@ -1,4 +1,4 @@
-logs/
+logs/*.log
 __pycache__
 errorDumps.txt
-extracted/
+extracted/*.ndjson

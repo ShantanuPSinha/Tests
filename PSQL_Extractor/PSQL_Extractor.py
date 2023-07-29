@@ -100,7 +100,7 @@ def main():
     records = list(cursor.fetchall())
 
     # Set the output filename based on user input
-    output_file = f"Extracted_{user_input_ecosystem}_packages.ndjson"
+    output_file = f"extracted/{user_input_ecosystem}_packages.ndjson"
 
     # List to store package information
     packages_list = []
