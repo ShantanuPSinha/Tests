@@ -2,6 +2,7 @@ import psycopg2
 import json
 from logger import init_logger, dump_error
 import os
+import re2 as re
 
 localhost_password = os.environ.get("PSQL_Password") or ''
 
@@ -53,8 +54,14 @@ def process_record(record : list):
         # Guess GitHub URL. Might be wrong
         package_repo = f"https://github.com/{package_owner_github}/{package_name}"
     
-    if package_repo not in unique_urls:
+    if package_repo is not None and package_repo not in unique_urls:
         unique_urls.add(package_repo)
+
+        if package_name is None or package_owner_github is None:
+            match = re.match(r"https?://(?:www\.)?(github|gitlab)\.com/([^/]+)/([^/]+)", package_repo)
+            if match:
+                package_name = match.group(1)
+                package_owner_github = match.group(2)
 
         return {
             "package_repo" : package_repo, 
@@ -67,6 +74,7 @@ def process_record(record : list):
         }
     
     return None
+
 
 def main():
     init_logger()
