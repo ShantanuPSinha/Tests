@@ -5,7 +5,7 @@
 ## If you want to exclude the Ecosystem field from the generated output json, change the 
 ## bool to False
 
-## Example Usage ./combine_datasets maven_packages.ndjson pypi_packages.ndjson npm_packages.ndjson bell_output.ndjson
+## Example Usage ./combine_datasets maven_packages.ndjson pypi_packages.ndjson npm_packages.ndjson bell.ndjson
 
 import argparse
 import json

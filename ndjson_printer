@@ -1,0 +1,359 @@
+#! /usr/bin/python3
+import json
+import argparse
+import sys
+
+def cleanUp_old(json_obj):
+    """
+    Remove entries from the JSON object that include "node_modules" in the file path.
+
+    Arguments:
+    json_obj -- the JSON object to clean.
+
+    Returns:
+    The cleaned JSON object.
+    """
+    
+    if 'usages' in json_obj:
+        for usage in json_obj['usages']:
+            if 'stack' in usage and 'entries' in usage['stack']:
+                # Remove entries that contain "node_modules" in the file path
+                usage['stack']['entries'] = [entry for entry in usage['stack']['entries'] 
+                                             if 'file_info' in entry and 
+                                             'file_path' in entry['file_info'] and 
+                                             'node_modules' not in entry['file_info']['file_path']]
+    return json_obj
+
+def cleanUp(json_obj):
+    """
+    Remove entries from the JSON object that include "node_modules" in the file path.
+
+    Arguments:
+    json_obj -- the JSON object to clean.
+
+    Returns:
+    The cleaned JSON object.
+    """
+    
+    if not isinstance(json_obj, dict):
+        raise TypeError("Input must be a dictionary representing the JSON object.")
+    
+    usages = json_obj.get('usages', [])
+    
+    if not isinstance(usages, list):
+        raise TypeError("'usages' must be a list of dictionaries.")
+    
+    new_usages = []
+    
+    for usage in usages:
+        if not isinstance(usage, dict):
+            raise TypeError("Each 'usage' within 'usages' must be a dictionary.")
+        
+        stack = usage.get('stack')
+        
+        if isinstance(stack, dict) and isinstance(stack.get('entries'), list):
+            new_entries = [] 
+
+            for entry in stack['entries']:
+
+                if not isinstance(entry, dict):
+                    raise TypeError("Each 'entry' within 'entries' must be a dictionary.")
+
+                file_info = entry.get('file_info')
+
+                if isinstance(file_info, dict) and 'file_path' in file_info:
+                    file_path = file_info['file_path']
+
+                    if isinstance(file_path, str) and 'node_modules' not in file_path:
+                        new_entries.append(entry)
+                    elif not isinstance(file_path, str):
+                        raise TypeError("'file_path' must be a string.")
+            
+            
+            usage['stack']['entries'] = new_entries
+        
+        new_usages.append(usage)
+    
+    json_obj['usages'] = new_usages
+    return json_obj
+
+
+def extract_info(json_object):
+    """
+    Extract specific information from a JSON object if certain conditions are met within the object's entries.
+
+    Arguments:
+    json_object -- the JSON object to extract information from.
+
+    Returns:
+    A dictionary containing specific extracted information.
+    """
+
+    result_data = {
+        "regex" : None,
+        "inputs" : [],
+        "project_repo_url" : None,
+        "file_info" : None
+    }
+
+    result_data["regex"] = json_object["pattern"]
+    result_data["project_repo_url"] = json_object ["project_repo_url"]
+    
+    for usage in json_object["usages"]:
+        for entry in usage["stack"]["entries"]:
+            if entry["caller"]["object"] == "RegExp": # and entry["caller"]["method"] == "exec":
+                result_data["file_info"] = entry["file_info"]
+                result_data["inputs"] = usage["subject"]
+                return result_data
+
+
+def remove_duplicate_usages_old(json_data):
+    """
+    Remove duplicate 'usages' entries from a JSON object based on unique stack information.
+
+    Arguments:
+    json_data -- the original JSON object containing a 'usages' list.
+
+    Returns:
+    A new JSON object with duplicates removed.
+    """
+    usages = json_data.get('usages', [])
+
+    unique_usages = []
+    seen_hashes = set()
+
+    for usage in usages:
+        stack_str = json.dumps(usage['stack'], sort_keys=True)
+        stack_hash = hash(stack_str)
+
+        if stack_hash not in seen_hashes:
+            seen_hashes.add(stack_hash)
+            unique_usages.append(usage)
+
+    json_data['usages'] = unique_usages
+    return json_data
+
+
+def remove_duplicate_usages(json_data):
+    """
+    Remove duplicate 'usages' entries from a JSON object based on unique stack information.
+
+    Arguments:
+    json_data -- the original JSON object containing a 'usages' list.
+
+    Returns:
+    A new JSON object with duplicates removed.
+    """
+    if not isinstance(json_data, dict):
+        raise TypeError(f"Expected a dictionary, but got {type(json_data).__name__}")
+
+    usages = json_data.get('usages', [])
+
+    if not isinstance(usages, list):
+        raise TypeError(f"Expected a list for 'usages', but got {type(usages).__name__}")
+
+    unique_usages = []
+    seen_hashes = set()
+
+    for usage in usages:
+        if not isinstance(usage, dict):
+            raise TypeError(f"Expected a dictionary in 'usages' list, but got {type(usage).__name__}")
+
+        stack = usage.get('stack', None)
+
+        if not isinstance(stack, dict):
+            raise TypeError(f"Expected a dictionary for 'stack', but got {type(stack).__name__}")
+
+        stack_str = json.dumps(stack, sort_keys=True)
+        stack_hash = hash(stack_str)
+
+        if stack_hash not in seen_hashes:
+            seen_hashes.add(stack_hash)
+            unique_usages.append(usage)
+
+    json_data['usages'] = unique_usages
+    return json_data
+
+
+
+def aggregate_info_old(json_objects):
+    """
+    Aggregate information from a list of JSON objects based on regex patterns.
+
+    Arguments:
+    json_objects -- list of JSON objects to process.
+
+    Returns:
+    A dictionary containing aggregated information.
+    """
+    regex_info = {}
+    for json_object in json_objects:
+        pattern = json_object["pattern"]
+
+        for usage in json_object["usages"]:
+            for entry in usage["stack"]["entries"]:
+                if entry["caller"]["object"] == "RegExp":
+                    input_subject = usage["subject"]
+                    
+                    if pattern in regex_info:
+                        regex_info[pattern]["inputs"].add(input_subject)
+                    else:
+                        regex_info[pattern] = {
+                            "inputs": set([input_subject]),
+                            "file_info": entry["file_info"]  # Assumes all usages have the same file_info for a regex.
+                        }
+
+    for pattern_info in regex_info.values():
+        pattern_info["inputs"] = list(pattern_info["inputs"])
+
+    return regex_info
+    
+    
+def aggregate_info(json_objects:list):
+    """
+    Aggregate information from a list of JSON objects based on regex patterns.
+
+    Arguments:
+    json_objects -- list of JSON objects to process.
+
+    Returns:
+    A dictionary containing aggregated information.
+    """
+    if not isinstance(json_objects, list):
+        raise TypeError("Input must be a list of JSON objects.")
+
+    regex_info = {}
+    for json_object in json_objects:
+        if not all(key in json_object for key in ["pattern", "usages"]):
+            raise ValueError("Each JSON object must contain 'pattern' and 'usages' keys.")
+
+        pattern = json_object["pattern"]
+
+        for usage in json_object["usages"]:
+            if not ("stack" in usage and "entries" in usage["stack"]):
+                raise ValueError("Each 'usage' must contain 'stack' with 'entries'.")
+
+            for entry in usage["stack"]["entries"]:
+                if not ("caller" in entry and "object" in entry["caller"] and "file_info" in entry and "file_path" in entry["file_info"]):
+                    raise ValueError("Each 'entry' must have a 'caller' with an 'object' and 'file_info' with a 'file_path'.")
+
+                if entry["caller"]["object"] == "RegExp":
+                    input_subject = usage.get("subject") 
+                    file_path = entry["file_info"]["file_path"]
+
+                    if not file_path:
+                        continue
+                    unique_key = (pattern, file_path)
+
+                    if unique_key in regex_info:
+                        regex_info[unique_key]["inputs"].add(input_subject)
+                    else:
+                        regex_info[unique_key] = {
+                            "inputs": set([input_subject]),
+                            "file_path": file_path
+                        }
+
+    # Convert sets to lists
+    aggregated_info_list = []
+    for (pattern, file_path), info in regex_info.items():
+        info["inputs"] = list(info["inputs"])
+        aggregated_info_list.append({
+            "regex": pattern,
+            "inputs": info["inputs"],
+            "file_path": file_path
+        })
+
+    return aggregated_info_list
+
+
+
+
+def process_ndjson(input_file_path, output_file_path, should_clean=True, should_dedup=True, should_aggregate=True):
+    """
+    Process the contents of an NDJSON file and write the results to an output file.
+
+    Arguments:
+    input_file_path -- path to the input NDJSON file.
+    output_file_path -- path to the output NDJSON file.
+    should_clean -- whether to clean the data (default: True).
+    should_dedup -- whether to de-duplicate entries (default: True).
+    should_aggregate -- whether to aggregate data (default: True).
+
+    Raises:
+    JSONDecodeError: If there is a problem parsing the file's JSON.
+    FileNotFoundError: If the input file does not exist.
+    """
+    try:
+        with open(input_file_path, 'r') as input_file:
+            # Parse each line as JSON and ensure it's a dictionary
+            json_objects = []
+            for line in input_file:
+                json_obj = json.loads(line.strip())
+                if isinstance(json_obj, dict):  # Ensure it's a dictionary
+                    json_objects.append(json_obj)
+                else:
+                    print(f"Warning: Expected a JSON object, got {type(json_obj)}", file=sys.stderr)
+
+        if should_clean:
+            json_objects = [cleanUp(json_obj) for json_obj in json_objects]
+
+        if should_dedup:
+            json_objects = [remove_duplicate_usages(json_obj) for json_obj in json_objects]
+
+        if should_aggregate:
+            aggregated_info = aggregate_info(json_objects)
+            with open(output_file_path, 'w') as output_file:
+                for item in aggregated_info: 
+                    json_str = json.dumps(item, indent=4)
+                    output_file.write(json_str + '\n')
+        else:
+            with open(output_file_path, 'w') as output_file:
+                for json_obj in json_objects:
+                    if isinstance(json_obj, dict):
+                        json_str = json.dumps(json_obj, indent=4)
+                        output_file.write(json_str + '\n')
+                    else:
+                        print(f"Warning: Skipping a non-dictionary object of type {type(json_obj)}", file=sys.stderr)
+
+        
+        print(f"Data has been processed and written to {output_file_path}")
+
+    except json.JSONDecodeError as e:
+        print(f"An error occurred while parsing JSON: {e}", file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"Input file {input_file_path} not found.", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error occurred: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def main():
+
+    parser = argparse.ArgumentParser(description='Process and clean NDJSON')
+    parser.add_argument('InputFile', metavar='input_file', type=str, help='the path to the input NDJSON file')
+    parser.add_argument('OutputFile', metavar='output_file', type=str, help='the path for the output NDJSON file')
+
+    parser.add_argument('--no-clean', dest='clean', action='store_false', 
+                        help='use this option to disable cleanup of entries')
+    
+    parser.add_argument('--no-dedup', dest='dedup', action='store_false', 
+                        help='use this option to disable de-duplication of entries')
+    
+    parser.add_argument('--no-aggregate', dest='aggregate', action='store_false', 
+                        help='use this option to disable information aggregation')
+
+    parser.set_defaults(clean=True, dedup=True, aggregate=True)
+    args = parser.parse_args()
+
+    process_ndjson(
+        input_file_path=args.InputFile, 
+        output_file_path=args.OutputFile, 
+        should_clean=args.clean, 
+        should_dedup=args.dedup, 
+        should_aggregate=args.aggregate
+    )
+
+if __name__ == "__main__":
+    main()
