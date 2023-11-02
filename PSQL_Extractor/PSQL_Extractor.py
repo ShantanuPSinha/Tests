@@ -19,6 +19,7 @@ logger, newline = init_logger()
 unique_urls = set()
 
 def process_record(record : list):
+
     package_name = None
     package_licenses = None
     package_language = None
@@ -26,7 +27,11 @@ def process_record(record : list):
     package_owner_github = None
     package_ecosystem = record[3]
     package_repo = record[5]
+    package_download_count = record[9]
 
+    if (not package_download_count) or (package_download_count < 10):
+        return None
+    
     if (record[6] == record[5]) or (package_repo == None):
         package_repo = record[6]
 
@@ -99,24 +104,20 @@ def process_ecosystem(ecosystem):
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor(name="large_result_cursor")
     
-    # Set the output filename based on the ecosystem
     output_file = f"extracted/{ecosystem}_packages.ndjson"
-
-    # List to store package information
     packages_list = []
 
     # Construct the dynamic SQL query with parameterized query
     query = """
         SELECT 
             id, registry_id, name, ecosystem, licenses,
-            repository_url, homepage, normalized_licenses, repo_metadata
+            repository_url, homepage, normalized_licenses, repo_metadata, downloads
         FROM 
             packages
         WHERE 
             ecosystem = %s;
     """
 
-    # Pass the user input as a tuple to cursor.execute
     cursor.execute(query, (ecosystem,))
     records = list(cursor.fetchmany(1000))
 
@@ -129,10 +130,14 @@ def process_ecosystem(ecosystem):
         records = list(cursor.fetchmany(1000))
        
     # Write all packages to the output file
+    packages_list = sorted(packages_list, key=lambda package: len(json.dumps(package)), reverse=True)
+    
     with open(output_file, "w") as f:
         for package in packages_list:
             json.dump(package, f)
             f.write('\n')
+
+    print (f"Dumped {len(packages_list)} items to {output_file}")
 
     cursor.close()
     conn.close()
