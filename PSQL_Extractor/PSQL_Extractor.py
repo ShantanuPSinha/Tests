@@ -1,11 +1,11 @@
-import psycopg2
-import json
-from logger import init_logger, dump_error
-import os
-import re2 as re
-import argparse
+#! /usr/bin/python3
 
-localhost_password = os.environ.get("PSQL_Password") or ''
+from logger import init_logger, dump_error
+import os, sys, argparse
+import re, json, psycopg2
+
+
+localhost_password = os.environ.get("PSQL_Password") or 'postgres'
 
 db_credentials = {
     "dbname": "packages_production",
@@ -18,8 +18,7 @@ db_credentials = {
 logger, newline = init_logger()
 unique_urls = set()
 
-def process_record(record : list):
-
+def process_record(record : list, filter_count=10) -> None or dict:
     package_name = None
     package_licenses = None
     package_language = None
@@ -29,29 +28,35 @@ def process_record(record : list):
     package_repo = record[5]
     package_download_count = record[9]
 
-    if (not package_download_count) or (package_download_count < 10):
+    if (not package_download_count) or (package_download_count < filter_count):
         return None
     
     if (record[6] == record[5]) or (package_repo == None):
         package_repo = record[6]
 
-    if (package_repo == None) or (package_repo == "") or (package_repo == " "):
+    if not package_repo or not package_repo.strip():
         package_repo = None
     
     repo_metadata = record[8]
-    
-    if repo_metadata == {}:
+
+    if repo_metadata is None:
         if package_repo == None:
             return None
     else:
-        package_name = repo_metadata["full_name"].split('/')[-1]
-        package_licenses = {"Normalised License" : record[4], "licenses" : record[7], "GitHub_License" : repo_metadata["license"]}
-        package_language = repo_metadata["language"]
-        package_starcount = repo_metadata["stargazers_count"]
-        package_owner_github = repo_metadata["owner"]
+        package_name = repo_metadata.get("full_name", "").split('/')[-1]
+
+        package_licenses = {
+            "Normalised License": record[4],
+            "licenses": record[7],          
+            "GitHub_License": repo_metadata.get("license")
+        }
+        
+        package_language = repo_metadata.get("language")
+        package_starcount = repo_metadata.get("stargazers_count")
+        package_owner_github = repo_metadata.get("owner")
 
         # If either owner or name is empty, return None
-        if package_owner_github == None or package_owner_github == "" or package_name == None or package_name == "":
+        if not package_owner_github or not package_name:
             return None
         
         # Guess GitHub URL. Might be wrong
@@ -99,12 +104,12 @@ def main():
         process_ecosystem(ecosystem)
 
 
-def process_ecosystem(ecosystem):
+def process_ecosystem(ecosystem : str, filter_count=10):
     print (f"Processing {ecosystem}...")
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor(name="large_result_cursor")
-    
-    output_file = f"extracted/{ecosystem}_packages.ndjson"
+
+    output_file = f"extracted/{ecosystem}_packages_{filter_count}.ndjson"
     packages_list = []
 
     # Construct the dynamic SQL query with parameterized query
@@ -118,14 +123,17 @@ def process_ecosystem(ecosystem):
             ecosystem = %s;
     """
 
+    none_cnt = 0
     cursor.execute(query, (ecosystem,))
     records = list(cursor.fetchmany(1000))
 
     while records:
         for record in records:
-            package_info = process_record(record)
+            package_info = process_record(record, filter_count)
             if package_info:
                 packages_list.append(package_info)
+            else:
+                none_cnt = none_cnt + 1
 
         records = list(cursor.fetchmany(1000))
        
@@ -137,7 +145,7 @@ def process_ecosystem(ecosystem):
             json.dump(package, f)
             f.write('\n')
 
-    print (f"Dumped {len(packages_list)} items to {output_file}")
+    print (f"Dumped {len(packages_list)} items to {output_file}. {none_cnt} Records returned None")
 
     cursor.close()
     conn.close()
