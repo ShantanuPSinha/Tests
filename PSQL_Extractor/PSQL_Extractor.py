@@ -18,7 +18,7 @@ db_credentials = {
 logger, newline = init_logger()
 unique_urls = set()
 
-def process_record(record : list, filter_count=10) -> None or dict:
+def process_record(record : list) -> None or dict:
     package_name = None
     package_licenses = None
     package_language = None
@@ -26,10 +26,6 @@ def process_record(record : list, filter_count=10) -> None or dict:
     package_owner_github = None
     package_ecosystem = record[3]
     package_repo = record[5]
-    package_download_count = record[9]
-
-    if (not package_download_count) or (package_download_count < filter_count):
-        return None
     
     if (record[6] == record[5]) or (package_repo == None):
         package_repo = record[6]
@@ -78,7 +74,8 @@ def process_record(record : list, filter_count=10) -> None or dict:
             "package_ecosystem" : package_ecosystem, 
             "package_licenses" : package_licenses, 
             "package_language" : package_language, 
-            "package_starcount" : package_starcount
+            "package_starcount" : package_starcount,
+            "downloads" : record[9]
         }
     
     return None
@@ -88,6 +85,7 @@ def main():
     parser.add_argument('--maven', action='store_true', help="Extract packages for Maven ecosystem.")
     parser.add_argument('--npm', action='store_true', help="Extract packages for npm ecosystem.")
     parser.add_argument('--pypi', action='store_true', help="Extract packages for PyPI ecosystem.")
+    parser.add_argument('--filter-count', type=int, default=100, help="Minimum number of downloads to filter the packages.")
     args = parser.parse_args()
 
     ecosystems = [ecosystem for ecosystem in ['maven', 'npm', 'pypi'] if getattr(args, ecosystem)]
@@ -101,11 +99,13 @@ def main():
         ecosystems = [user_input_ecosystem]
 
     for ecosystem in ecosystems:
-        process_ecosystem(ecosystem)
+        process_ecosystem(ecosystem, args.filter_count)
 
 
 def process_ecosystem(ecosystem : str, filter_count=10):
     print (f"Processing {ecosystem}...")
+    print (f"Excluding packages with less than {filter_count} lifetime downloads.\n")
+
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor(name="large_result_cursor")
 
@@ -120,32 +120,31 @@ def process_ecosystem(ecosystem : str, filter_count=10):
         FROM 
             packages
         WHERE 
-            ecosystem = %s;
-    """
+            ecosystem = %s AND downloads >= %s;
+    """   
 
-    none_cnt = 0
-    cursor.execute(query, (ecosystem,))
+    cursor.execute(query, (ecosystem, filter_count))
     records = list(cursor.fetchmany(1000))
 
     while records:
         for record in records:
-            package_info = process_record(record, filter_count)
+            package_info = process_record(record)
             if package_info:
                 packages_list.append(package_info)
-            else:
-                none_cnt = none_cnt + 1
 
         records = list(cursor.fetchmany(1000))
        
     # Write all packages to the output file
-    packages_list = sorted(packages_list, key=lambda package: len(json.dumps(package)), reverse=True)
+    # packages_list = sorted(packages_list, key=lambda package: len(json.dumps(package)), reverse=True)
+    packages_list = sorted(packages_list, key=lambda package: package["downloads"], reverse=True)
+
     
     with open(output_file, "w") as f:
         for package in packages_list:
             json.dump(package, f)
             f.write('\n')
 
-    print (f"Dumped {len(packages_list)} items to {output_file}. {none_cnt} Records returned None")
+    print (f"Dumped {len(packages_list)} items to {output_file}")
 
     cursor.close()
     conn.close()
