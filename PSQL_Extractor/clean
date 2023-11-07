@@ -1,0 +1,22 @@
+#! /usr/bin/bash
+
+current_dir=$(basename "$PWD")
+
+if [ "$current_dir" == "PSQL_Extractor" ]; then
+    if [ -d "./logs" ]; then
+        rm -f ./logs/*.log
+        echo "Log files deleted."
+    else
+        echo "./logs/ directory does not exist."
+    fi
+    
+    if [ -d "./extracted" ]; then
+        # Delete all ndjson files in ./extracted/ directory
+        rm -f ./extracted/*.ndjson
+        echo ".ndjson files deleted."
+    else
+        echo "./extracted/ directory does not exist."
+    fi
+else
+    echo "The current directory is not 'PSQL_Extractor'."
+fi
