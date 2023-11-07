@@ -153,7 +153,6 @@ def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
     output_file = f"extracted/{ecosystem}_packages_{filter_count}.ndjson"
     packages_list = []
 
-    # Construct the dynamic SQL query with parameterized query
     query = """
         SELECT 
             id, registry_id, name, ecosystem, licenses,
@@ -162,7 +161,10 @@ def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
             packages
         WHERE 
             ecosystem = %s AND downloads >= %s;
-    """   
+    """
+
+    # Query returns list. Each field is a list item in-order. 
+    # So, id field is record[0], registry_id is record[1], name is record[2] and so on
 
     cursor.execute(query, (ecosystem, filter_count))
     records = list(cursor.fetchmany(1000))
