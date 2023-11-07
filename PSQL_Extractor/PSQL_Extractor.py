@@ -4,7 +4,6 @@ from logger import init_logger, dump_error
 import os, sys, argparse
 import re, json, psycopg2
 
-
 localhost_password = os.environ.get("PSQL_Password") or 'postgres'
 
 db_credentials = {
@@ -17,6 +16,19 @@ db_credentials = {
 
 logger, newline = init_logger()
 unique_urls = set()
+
+def get_total_package_count():
+    conn = psycopg2.connect(**db_credentials)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT COUNT(*) FROM packages;")
+    total_count = cursor.fetchone()[0]
+
+    print (f"Total number of Packages in Database: {total_count}")
+    
+    cursor.close()
+    conn.close()
+
 
 def process_record(record : list) -> None or dict:
     package_name = None
@@ -150,3 +162,4 @@ def process_ecosystem(ecosystem : str, filter_count=10):
 # Call the main function to start the program
 if __name__ == "__main__":
     main()
+    get_total_package_count()
