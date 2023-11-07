@@ -109,9 +109,6 @@ def process_record(record : list) -> None or dict:
     
     return None
 
-
-import sys
-
 def main():
     parser = argparse.ArgumentParser(description="Extract package information based on the desired ecosystems.", allow_abbrev=False)
     parser.add_argument('--maven', action='store_true', help="Extract packages for Maven ecosystem.")
