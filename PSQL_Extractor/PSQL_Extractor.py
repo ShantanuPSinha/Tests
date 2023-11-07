@@ -135,10 +135,7 @@ def process_ecosystem(ecosystem : str, filter_count=10):
         records = list(cursor.fetchmany(1000))
        
     # Write all packages to the output file
-    # packages_list = sorted(packages_list, key=lambda package: len(json.dumps(package)), reverse=True)
-    packages_list = sorted(packages_list, key=lambda package: package["downloads"], reverse=True)
-
-    
+    packages_list = sorted(packages_list, key=lambda package: package["downloads"], reverse=True)    
     with open(output_file, "w") as f:
         for package in packages_list:
             json.dump(package, f)
