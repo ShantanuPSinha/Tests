@@ -36,7 +36,6 @@ def get_total_package_count(ecosystem : str) -> int:
     conn.close()
     return total_count
 
-
 def process_record(record : list) -> None or dict:
     """
     Process a single database record and extract package information.
@@ -64,7 +63,10 @@ def process_record(record : list) -> None or dict:
     
     repo_metadata = record[8]
 
-    if repo_metadata is None:
+    # if repo_metadata is None   \\ 90k Packages
+    # if repo_metadata == {}     \\ 200k Packages
+
+    if not repo_metadata:
         if package_repo == None:
             return None
     else:
