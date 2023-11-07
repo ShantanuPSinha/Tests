@@ -17,17 +17,16 @@ db_credentials = {
 logger, newline = init_logger()
 unique_urls = set()
 
-def get_total_package_count():
+def get_total_package_count(ecosystem : str) -> int:
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor()
-    
-    cursor.execute("SELECT COUNT(*) FROM packages;")
+
+    cursor.execute("SELECT COUNT(*) FROM packages WHERE ecosystem = %s;", (ecosystem,))
     total_count = cursor.fetchone()[0]
 
-    print (f"Total number of Packages in Database: {total_count}")
-    
     cursor.close()
     conn.close()
+    return total_count
 
 
 def process_record(record : list) -> None or dict:
@@ -98,6 +97,7 @@ def main():
     parser.add_argument('--npm', action='store_true', help="Extract packages for npm ecosystem.")
     parser.add_argument('--pypi', action='store_true', help="Extract packages for PyPI ecosystem.")
     parser.add_argument('--filter-count', type=int, default=100, help="Minimum number of downloads to filter the packages.")
+    parser.add_argument('--display-db-size', action='store_true', help="Display the size of the database.")
     args = parser.parse_args()
 
     ecosystems = [ecosystem for ecosystem in ['maven', 'npm', 'pypi'] if getattr(args, ecosystem)]
@@ -111,10 +111,10 @@ def main():
         ecosystems = [user_input_ecosystem]
 
     for ecosystem in ecosystems:
-        process_ecosystem(ecosystem, args.filter_count)
+        process_ecosystem(ecosystem, args.filter_count, args.display_db_size)
 
 
-def process_ecosystem(ecosystem : str, filter_count=10):
+def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
     print (f"Processing {ecosystem}...")
     print (f"Excluding packages with less than {filter_count} lifetime downloads.\n")
 
@@ -153,7 +153,13 @@ def process_ecosystem(ecosystem : str, filter_count=10):
             json.dump(package, f)
             f.write('\n')
 
-    print (f"Dumped {len(packages_list)} items to {output_file}")
+    out_pkg_cnt = len(packages_list)
+
+    print (f"Dumped {out_pkg_cnt} items to {output_file}")
+
+    if display_db_size:
+        pkg_count = get_total_package_count(ecosystem)
+        print (f"{ecosystem} database has {pkg_count} packages. Filtered out {pkg_count - out_pkg_cnt} packages")
 
     cursor.close()
     conn.close()
@@ -162,4 +168,3 @@ def process_ecosystem(ecosystem : str, filter_count=10):
 # Call the main function to start the program
 if __name__ == "__main__":
     main()
-    get_total_package_count()
