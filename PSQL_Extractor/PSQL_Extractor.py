@@ -1,23 +1,31 @@
 #! /usr/bin/python3
 
-from logger import init_logger, dump_error
-import os, sys, argparse
+import os, argparse
 import re, json, psycopg2
 
 localhost_password = os.environ.get("PSQL_Password") or 'postgres'
 
 db_credentials = {
     "dbname": "packages_production",
-    "user": "postgres",
-    "password": localhost_password,
+    "user": "postgres", # Default User
+    "password": localhost_password, 
     "host": "localhost",
     "port": "5432"  # Default PostgreSQL port
 }
 
-logger, newline = init_logger()
 unique_urls = set()
 
 def get_total_package_count(ecosystem : str) -> int:
+    """
+    Retrieves the total count of packages for a given ecosystem.
+
+    Parameters:
+    - ecosystem (str): Ecosystem Name.
+
+    Returns:
+    - total_count (int): Total package count for specified ecosystem.
+    """
+
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor()
 
@@ -30,6 +38,16 @@ def get_total_package_count(ecosystem : str) -> int:
 
 
 def process_record(record : list) -> None or dict:
+    """
+    Process a single database record and extract package information.
+
+    Parameters:
+    - record (list): A list of values representing a single database record.
+
+    Returns:
+    - JSON with processed package information, or None if crucial fields are missing.
+    """
+
     package_name = None
     package_licenses = None
     package_language = None
@@ -91,6 +109,7 @@ def process_record(record : list) -> None or dict:
     
     return None
 
+
 def main():
     parser = argparse.ArgumentParser(description="Extract package information based on the desired ecosystems.")
     parser.add_argument('--maven', action='store_true', help="Extract packages for Maven ecosystem.")
@@ -115,8 +134,19 @@ def main():
 
 
 def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
+    """
+    Processes packages in a given ecosystem from the database based on filters and display options.
+
+    Parameters:
+    - ecosystem (str): The ecosystem to be processed.
+    - filter_count (int, optional): The minimum number of downloads required to process a package.
+    - display_db_size (bool, optional): Flag to display the total number of packages in the ecosystem.
+
+    Side effects:
+    - Writes processed package information into a .ndjson file.
+    """
+
     print (f"Processing {ecosystem}...")
-    print (f"Excluding packages with less than {filter_count} lifetime downloads.\n")
 
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor(name="large_result_cursor")
@@ -145,9 +175,10 @@ def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
                 packages_list.append(package_info)
 
         records = list(cursor.fetchmany(1000))
-       
-    # Write all packages to the output file
-    packages_list = sorted(packages_list, key=lambda package: package["downloads"], reverse=True)    
+
+    # Sort isn't necessary, but helps with running diff
+    packages_list = sorted(packages_list, key=lambda package: package["downloads"], reverse=True) 
+
     with open(output_file, "w") as f:
         for package in packages_list:
             json.dump(package, f)
@@ -164,7 +195,5 @@ def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
     cursor.close()
     conn.close()
 
-
-# Call the main function to start the program
 if __name__ == "__main__":
     main()
