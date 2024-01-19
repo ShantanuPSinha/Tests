@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-## Can Accept indeterminate amount of input files. Cleans it up and outputs to another output file
+## Can Accept indeterminate amount of input files. Cleans it up and outputs to another file
 ##
 ## If you want to exclude the Ecosystem field from the generated output json, change the 
 ## bool to False

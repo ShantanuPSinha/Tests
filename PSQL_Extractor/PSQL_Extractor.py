@@ -36,7 +36,7 @@ def get_total_package_count(ecosystem : str) -> int:
     conn.close()
     return total_count
 
-def process_record(record : list) -> None or dict:
+def process_record_o(record : list) -> None or dict:
     """
     Process a single database record and extract package information.
 
@@ -69,6 +69,9 @@ def process_record(record : list) -> None or dict:
     if not repo_metadata:
         if package_repo == None:
             return None
+        else:
+            pass
+            #print ("cry")
     else:
         package_name = repo_metadata.get("full_name", "").split('/')[-1]
 
@@ -111,6 +114,70 @@ def process_record(record : list) -> None or dict:
     
     return None
 
+def process_record(record: list) -> dict or None:
+    """
+    Process a single database record and extract package information.
+
+    Parameters:
+    - record (list): A list representing a single database record.
+
+    Returns:
+    - dict: A dictionary with processed package information, or None if crucial fields are missing.
+    """
+
+
+    package_repo = record[5] or record[6]
+
+    if not package_repo or not package_repo.strip():
+        return None
+
+    repo_metadata = record[8]
+
+    if repo_metadata != {}:
+        package_name = repo_metadata.get("full_name", "").split('/')[-1]
+        package_owner_github = repo_metadata.get("owner")
+        if not package_owner_github or not package_name:
+            return None
+
+        package_licenses = {
+            "Normalised License": record[4],
+            "licenses": record[7],
+            "GitHub_License": repo_metadata.get("license")
+        }
+
+        package_language = repo_metadata.get("language")
+        package_starcount = repo_metadata.get("stargazers_count")
+        package_repo = f"https://github.com/{package_owner_github}/{package_name}"
+
+    else:
+        match = re.match(r"https?://(?:www\.)?(github|gitlab)\.com/([^/]+)/([^/]+)", package_repo)
+        if not match:
+            return None
+
+        package_name, package_owner_github = match.group(3), match.group(2)
+        package_licenses, package_language, package_starcount = None, None, None
+
+    if not package_name or not package_owner_github:
+        return None
+
+    # Assuming unique_urls is a set defined outside this function
+    if package_repo not in unique_urls:
+        unique_urls.add(package_repo)
+        return {
+            "package_repo": package_repo,
+            "package_name": package_name,
+            "repo_owner": package_owner_github,
+            "package_ecosystem": record[3],
+            "package_licenses": package_licenses,
+            "package_language": package_language,
+            "package_starcount": package_starcount,
+            "downloads": record[9]
+        }
+
+    return None
+
+
+
 def main():
     parser = argparse.ArgumentParser(description="Extract package information based on the desired ecosystems.", allow_abbrev=False)
     parser.add_argument('--maven', action='store_true', help="Extract packages for Maven ecosystem.")
@@ -152,7 +219,7 @@ def process_ecosystem(ecosystem : str, filter_count=10, display_db_size=False):
     conn = psycopg2.connect(**db_credentials)
     cursor = conn.cursor(name="large_result_cursor")
 
-    output_file = f"extracted/{ecosystem}_packages_{filter_count}.ndjson"
+    output_file = f"extracted/{ecosystem}_packages_{filter_count}_tempy.ndjson"
     packages_list = []
 
     query = """
