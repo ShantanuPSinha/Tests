@@ -2,12 +2,20 @@
 import json
 import argparse
 import sys
+import os
+
+def is_file_empty(file_path):
+    """Check if a file is empty by reading its size."""
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return os.path.getsize(file_path) == 0
+    else:
+        return True 
 
 def cleanUp(json_obj: dict) -> dict:
     """
     Clean the provided JSON object by removing specific entries and duplicates.
 
-    This function inspects a nested JSON object to remove any entries that have "node_modules" 
+    This function inspects the JSON object to remove any entries that have "node_modules" 
     or "internal/modules" within the file path and eliminates any duplicate 'usage' entries.
 
     Arguments:
@@ -95,10 +103,6 @@ def transform_json(original_json: dict) -> list:
         data["file_path"] = file_path
         result.append(data)
 
-    if len (result) > 1:
-        print ("SAW ONE REGEX WITH MULTIPLE FILE PATHS. PROCEED TO CRY")  # Should never happen
-        # raise Hell
-
     return result
 
 def ndjson_printer(input_file_path : str, output_file_path : str) -> None:
@@ -124,9 +128,6 @@ def ndjson_printer(input_file_path : str, output_file_path : str) -> None:
     except FileNotFoundError:
         print(f"File not found: {input_file_path}")
 
-    except IOError as e:
-        print(f"An I/O error occurred: {e}")
-        
 
 def process_ndjson(input_file_path: str, output_file_path : str) -> None:
     """
@@ -140,46 +141,74 @@ def process_ndjson(input_file_path: str, output_file_path : str) -> None:
     JSONDecodeError: If there is a problem parsing the file's JSON.
     FileNotFoundError: If the input file does not exist.
     """
+
+    if is_file_empty (input_file_path):
+        sys.exit (0)
+
     try:
         with open(input_file_path, 'r') as input_file, open(output_file_path, 'w') as output_file:
             for line in input_file:
-
                 json_obj = json.loads(line.strip())
                 if not isinstance(json_obj, dict):
                     continue
 
-                cleaned_json_obj = cleanUp(json_obj)
-                result_data_list = transform_json(cleaned_json_obj)
+                result_data_list = transform_json(cleanUp(json_obj))
 
                 for item in result_data_list:
-                    json_str = json.dumps(item, indent=4)
-                    output_file.write(json_str + '\n')
+                    output_file.write(json.dumps(item) + '\n')
 
-        print(f"Data has been processed and written to {output_file_path}")
+        #print(f"Data has been processed and written to {output_file_path}")
 
     except json.JSONDecodeError as e:
-        print(f"An error occurred while parsing JSON: {e}", file=sys.stderr)
+        print(f"An error occurred while parsing JSON: {e}\n\n", file=sys.stderr)
         sys.exit(1)
     except FileNotFoundError:
-        print(f"Input file {input_file_path} not found.", file=sys.stderr)
+        print(f"Input file {input_file_path} not found.\n\n", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"An error occurred: {e}", file=sys.stderr)
+        print(f"An error occurred: {e}\n\n", file=sys.stderr)
         sys.exit(1)
+
+
+
+def sort_ndjson(input_file, output_file="/tmp/concat_sorted.ndjson", sort_key="regex"):
+    """
+    Sorts an ndjson file by a specified key and writes the sorted data to a new ndjson file.
+
+    :param input_file: Path to the input ndjson file.
+    :param output_file: Path to the output ndjson file.
+    :param sort_key: The key to sort the ndjson objects by.
+    """
+    try:
+        with open(input_file, 'r') as infile:
+            data = [json.loads(line) for line in infile]
+
+        sorted_data = sorted(data, key=lambda x: x.get(sort_key, ''))
+
+        with open(output_file, 'w') as outfile:
+            for item in sorted_data:
+                json.dump(item, outfile)
+                outfile.write('\n')
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process and clean NDJSON files.')
     parser.add_argument('InputFile', metavar='input_file', type=str, help='The path to the input NDJSON file.')
     parser.add_argument('OutputFile', metavar='output_file', type=str, help='The path for the output NDJSON file.')
     parser.add_argument('--print-only', action='store_true', help='Only print the input NDJSON file, bypassing processing.')
+    parser.add_argument('--sort-only', action='store_true', help='Sort the input NDJSON file, bypassing processing.')
 
     args = parser.parse_args()
 
-    if args.print_only:
+    if args.sort_only:
+        sort_ndjson(args.InputFile, args.OutputFile)
+    elif args.print_only:
         ndjson_printer(args.InputFile, args.OutputFile)
     else:
         process_ndjson(args.InputFile, args.OutputFile)
-
 
 if __name__ == "__main__":
     main()

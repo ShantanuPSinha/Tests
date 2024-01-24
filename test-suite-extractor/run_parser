@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Directories for the test suites and the processed output
+TEST_SUITE_DIR="./test-suites"
+OUT_DIR="./test-suites/processed"
+concat_output_file="./concat.ndjson"
+
+# Create the output directory if it doesn't exist
+mkdir -p "$OUT_DIR"
+
+# Loop through each file in the test suites directory
+for file in $TEST_SUITE_DIR/*
+do
+    # Continue to next iteration if it's not a file
+    if [ ! -f "$file" ]; then
+        continue
+    fi
+
+    # Get the filename from the path
+    filename=$(basename -- "$file")
+    # Define the output file path
+    output_file="${OUT_DIR}/${filename}_processed.ndjson"
+    echo "Processing ${file}"
+
+    # Run the Python parser on the file and save to output
+    python3 ./new_ndjson_parser "$file" "$output_file"
+done
+
+# Empty the concat output file to ensure it's clean before appending
+> "$concat_output_file"
+
+# Concatenate all processed files into a single file
+for file in "$OUT_DIR"/*; do
+    # Check if the file exists and is not empty before appending
+    if [ -f "$file" ] && [ -s "$file" ]; then
+        cat "$file" >> "$concat_output_file"
+    fi
+done
+
+echo "Concatenation complete. Sorting...."
+
+# Sort the concatenated file
+python3 ./new_ndjson_parser "$concat_output_file" "$concat_output_file" "--sort-only"
+
+# Check if Node.js is available on the path
+if ! type node > /dev/null; then
+    echo "Node.js not found on Path."
+
+    # Check if nvm is available
+    if type nvm > /dev/null; then
+        echo "Setting Node.js on path using nvm"
+        nvm use node
+    else
+        echo "Neither Node.js nor nvm found."
+        popd
+        exit 1
+    fi
+fi
+
+# Run the Node.js script to process the data
+node split_inputs.js "$concat_output_file"
