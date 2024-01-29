@@ -6,9 +6,8 @@ function splitInputsByRegex(filePath, outputFilePath) {
     const writeStream = fs.createWriteStream(outputFilePath);
     const rl = readline.createInterface({ input: readStream });
     let isFirstEntry = true;
-    let totalPositive = 0;
-    let totalNegative = 0;
-    let entryCount = 0;
+    const positiveInputsCounts = [];
+    const negativeInputsCounts = [];
 
     rl.on('line', line => {
         if (line) {
@@ -18,7 +17,7 @@ function splitInputsByRegex(filePath, outputFilePath) {
                 entry = JSON.parse(line);
                 regex = new RegExp(entry.regex);
             } catch (e) {
-                console.error('Error parsing JSON or creating regex:','\n', e.message, '\n');
+                console.error('Error parsing JSON or creating regex:', '\n', e.message, '\n');
                 return;
             }
 
@@ -33,9 +32,8 @@ function splitInputsByRegex(filePath, outputFilePath) {
                 }
             });
 
-            totalPositive += positiveInputs.length;
-            totalNegative += negativeInputs.length;
-            entryCount++;
+            positiveInputsCounts.push(positiveInputs.length);
+            negativeInputsCounts.push(negativeInputs.length);
 
             const result = {
                 regex: entry.regex,
@@ -52,20 +50,30 @@ function splitInputsByRegex(filePath, outputFilePath) {
         }
     });
 
-    rl.on('close', function() {
+    rl.on('close', function () {
         writeStream.end();
 
-        if (entryCount > 0) {
-            const averagePositive = totalPositive / entryCount;
-            const averageNegative = totalNegative / entryCount;
-            console.log(`Average Number of Positive Inputs: ${averagePositive.toFixed(0)}`);
-            console.log(`Average Number of Negative Inputs: ${averageNegative.toFixed(0)}`);
+        if (positiveInputsCounts.length > 0) {
+            const medianPositive = median(positiveInputsCounts);
+            const medianNegative = median(negativeInputsCounts);
+            console.log(`Median Number of Positive Inputs: ${medianPositive}`);
+            console.log(`Median Number of Negative Inputs: ${medianNegative}`);
         }
     });
 
-    writeStream.on('finish', function() {
+    writeStream.on('finish', function () {
         console.log('Finished writing to', outputFilePath);
     });
+}
+
+function median(arr) {
+    const sorted = [...arr].sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+        return (sorted[middle - 1] + sorted[middle]) / 2;
+    } else {
+        return sorted[middle];
+    }
 }
 
 const args = process.argv.slice(2);
@@ -76,4 +84,4 @@ if (!args[0]) {
     process.exit(1);
 }
 
-splitInputsByRegex(args[0], args[1] || 'output_file.json');
+splitInputsByRegex(args[0], args[1] || 'output_file.ndjson');
