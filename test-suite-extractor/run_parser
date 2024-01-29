@@ -52,7 +52,6 @@ if ! type node > /dev/null; then
         nvm use node
     else
         echo "Neither Node.js nor nvm found."
-        popd
         exit 1
     fi
 fi

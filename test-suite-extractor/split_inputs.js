@@ -10,8 +10,6 @@ function splitInputsByRegex(filePath, outputFilePath) {
     let totalNegative = 0;
     let entryCount = 0;
 
-    writeStream.write('[');
-
     rl.on('line', line => {
         if (line) {
             let entry;
@@ -47,7 +45,7 @@ function splitInputsByRegex(filePath, outputFilePath) {
             };
 
             if (!isFirstEntry) {
-                writeStream.write(',\n');
+                writeStream.write('\n');
             }
             writeStream.write(JSON.stringify(result));
             isFirstEntry = false;
@@ -55,7 +53,6 @@ function splitInputsByRegex(filePath, outputFilePath) {
     });
 
     rl.on('close', function() {
-        writeStream.write(']');
         writeStream.end();
 
         if (entryCount > 0) {
@@ -68,39 +65,6 @@ function splitInputsByRegex(filePath, outputFilePath) {
 
     writeStream.on('finish', function() {
         console.log('Finished writing to', outputFilePath);
-    });
-}
-
-
-
-function calculateAverageInputs(outputFilePath) {
-    fs.readFile(outputFilePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error("Error reading file:", err);
-            return;
-        }
-
-        let entries;
-        try {
-            entries = JSON.parse(data);
-        } catch (e) {
-            console.error("Error parsing JSON:", e);
-            return;
-        }
-
-        let totalPositive = 0;
-        let totalNegative = 0;
-
-        entries.forEach(entry => {
-            totalPositive += entry.positive_inputs.length;
-            totalNegative += entry.negative_inputs.length;
-        });
-
-        const averagePositive = totalPositive / entries.length;
-        const averageNegative = totalNegative / entries.length;
-
-        console.log(`Average Number of Positive Inputs: ${averagePositive.toFixed(2)}`);
-        console.log(`Average Number of Negative Inputs: ${averageNegative.toFixed(2)}`);
     });
 }
 
