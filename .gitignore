@@ -1,1 +1,3 @@
 __pycache__
+/test-suite-extractor/**/*.ndjson
+test-suite-extractor/test-suites/
