@@ -17,7 +17,7 @@ function splitInputsByRegex(filePath, outputFilePath) {
                 entry = JSON.parse(line);
                 regex = new RegExp(entry.regex);
             } catch (e) {
-                console.error('Error parsing JSON or creating regex:', '\n', e.message, '\n');
+                console.error('Error parsing JSON or creating regex');
                 return;
             }
 
@@ -56,7 +56,7 @@ function splitInputsByRegex(filePath, outputFilePath) {
         if (positiveInputsCounts.length > 0) {
             const medianPositive = median(positiveInputsCounts);
             const medianNegative = median(negativeInputsCounts);
-            console.log(`Median Number of Positive Inputs: ${medianPositive}`);
+            console.log(`\nMedian Number of Positive Inputs: ${medianPositive}`);
             console.log(`Median Number of Negative Inputs: ${medianNegative}`);
         }
     });
