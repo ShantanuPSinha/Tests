@@ -5,6 +5,7 @@ TEST_SUITE_DIR="./test-suites"
 OUT_DIR="./test-suites/processed"
 concat_output_file="./temp.ndjson"
 final_output_file="./regex.ndjson"
+RFixer_OUTDIR="./rfixer_output"
 
 # Create the output directory if it doesn't exist
 mkdir -p "$OUT_DIR"
@@ -55,8 +56,12 @@ if ! type node > /dev/null; then
         echo "Neither Node.js nor nvm found."
         exit 1
     fi
-fi
+
+
+
+
+
 
 # Run the Node.js script to process the data
-node split_inputs.js "$concat_output_file" "$final_output_file"
-python3 analyse_regex.py "$final_output_file"
+# node split_inputs.js "$concat_output_file" "$final_output_file"
+python3 analyse_regex.py "$final_output_file" "$RFixer_OUTDIR"

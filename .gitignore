@@ -1,3 +1,4 @@
 __pycache__
 /test-suite-extractor/**/*.ndjson
 test-suite-extractor/test-suites/
+test-suite-extractor/rfixer_output

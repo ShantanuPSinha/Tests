@@ -1,8 +1,9 @@
-import json, sys, time
+import json, sys, time, os, re
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Cause why not at this point
+from run_rfixer import run_rfixer
+
 def timing_wrapper(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
@@ -11,6 +12,15 @@ def timing_wrapper(func):
         print(f"{func.__name__} took {end_time - start_time:.4f} seconds")
         return result
     return wrapper
+
+
+def dump_dict_to_ndjson(data, file_name="solutions.ndjson"):
+    with open(file_name, 'w') as file:
+        for key, value in data.items():
+            json_object = json.dumps({key: value})
+            file.write(json_object + '\n')
+
+
 
 def load_data(file_path: str):
     with open(file_path, 'r') as file:
@@ -29,56 +39,7 @@ def load_data(file_path: str):
         entry['id'] = id  # Add an ID field
         data.append(entry)
 
-    # Sort by the length while keeping the IDs
-    positive_inputs.sort(key=lambda x: x[1])
-    negative_inputs.sort(key=lambda x: x[1])
-
     return positive_inputs, negative_inputs, data
-
-
-def annotate_plot(ax, x : np.ndarray, y : np.ndarray):
-    for i in range(len(x)):
-        ax.annotate(f"{y[i]:.0f}", (x[i], y[i]), textcoords="offset points", xytext=(0,10), ha='center')
-
-
-def generate_percentile_plots(positive_inputs : list, negative_inputs : list) -> None:
-    positive_lengths = [length for _, length in positive_inputs]
-    negative_lengths = [length for _, length in negative_inputs]
-
-    percentiles = np.arange(5, 101, 5)
-    positive_percentile_values = np.percentile(positive_lengths, percentiles)
-    negative_percentile_values = np.percentile(negative_lengths, percentiles)
-
-    _, axs = plt.subplots(1, 2, figsize=(12, 6))
-
-    major_ticks = np.arange(0, 101, 10)
-    minor_ticks = np.arange(0, 101, 5)
-
-    for ax in axs:
-        ax.set_xticks(major_ticks)
-        ax.set_xticks(minor_ticks, minor=True)
-        
-        ax.grid(which='major', alpha=0.5)
-        ax.grid(which='minor', axis='x', alpha=0.2)
-
-    # Positive Inputs Plot
-    axs[0].set_title('Percentile Plot of Positive Input Lengths')
-    axs[0].set_xlabel('Percentile')
-    axs[0].set_ylabel('Input Length')
-    axs[0].plot(percentiles, positive_percentile_values, marker='o', linestyle='-', color='blue')
-    axs[0].set_yscale('log')
-    annotate_plot(axs[0], percentiles, positive_percentile_values)
-
-    # Negative Inputs Plot
-    axs[1].set_title('Percentile Plot of Negative Input Lengths')
-    axs[1].set_xlabel('Percentile')
-    axs[1].set_ylabel('Input Length')
-    axs[1].plot(percentiles, negative_percentile_values, marker='o', linestyle='-', color='red')
-    axs[1].set_yscale('log')
-    annotate_plot(axs[1], percentiles, negative_percentile_values)
-
-    plt.tight_layout()
-    plt.savefig('percentile_plots.png')
 
 """
 Not sure if this is useful. Need both positive and negative inputs for synthesis to work.
@@ -96,11 +57,12 @@ def find_entries_in_percentile_range(data, input_data, lower_percentile, upper_p
     entries_in_range = []
     for id, length in input_data:
         if lower_bound <= length <= upper_bound:
-            entries_in_range.append(data[id])
+            entries_in_range.append(id)
 
     return entries_in_range
 
-def filter_non_zero_entries(positive_inputs, negative_inputs, data):
+@timing_wrapper
+def filter_entries(positive_inputs, negative_inputs, data, upper_bound=100, lower_bound=5):
     positive_dict = {id: length for id, length in positive_inputs}
     negative_dict = {id: length for id, length in negative_inputs}
 
@@ -110,16 +72,92 @@ def filter_non_zero_entries(positive_inputs, negative_inputs, data):
 
     for entry in data:
         id = entry['id']
-        if len(entry['positive_inputs']) > 0 and len(entry['negative_inputs']) > 0:
+        pos_len = positive_dict.get(id, 0)
+        neg_len = negative_dict.get(id, 0)
+        if lower_bound < pos_len < upper_bound and lower_bound < neg_len < upper_bound:
             filtered_data.append(entry)
-            if id in positive_dict:
-                filtered_positive_inputs.append((id, positive_dict[id]))
-            if id in negative_dict:
-                filtered_negative_inputs.append((id, negative_dict[id]))
+            filtered_positive_inputs.append((id, pos_len))
+            filtered_negative_inputs.append((id, neg_len))
 
     return filtered_positive_inputs, filtered_negative_inputs, filtered_data
 
-positive_lengths, negative_lengths, data = load_data(sys.argv[1] if len(sys.argv) > 1 else './regex.ndjson')
-generate_percentile_plots(positive_lengths, negative_lengths)
-filtered_positive_inputs, filtered_negative_inputs, filtered_data = filter_non_zero_entries(positive_lengths, negative_lengths, data)
+@timing_wrapper
+def generate_percentile_plots(positive_inputs, negative_inputs):
+    percentiles = np.arange(5, 101, 5)
 
+    def plot_percentiles(ax, inputs, color, title):
+        lengths = [length for _, length in inputs]
+        percentile_values = np.percentile(lengths, percentiles)
+        ax.set_title(title)
+        ax.set_xlabel('Percentile')
+        ax.set_ylabel('Input Length')
+        ax.plot(percentiles, percentile_values, marker='o', linestyle='-', color=color)
+        ax.set_yscale('log')
+
+        # Add gridlines
+        major_ticks = np.arange(0, 101, 10)
+        minor_ticks = np.arange(0, 101, 5)
+        ax.set_xticks(major_ticks)
+        ax.set_xticks(minor_ticks, minor=True)
+        ax.grid(which='major', alpha=0.5)
+        ax.grid(which='minor', axis='x', alpha=0.2)
+
+        for i, value in enumerate(percentile_values):
+            ax.annotate(f"{value:.0f}", (percentiles[i], value), textcoords="offset points", xytext=(0,10), ha='center')
+
+    _, axs = plt.subplots(1, 2, figsize=(12, 6))
+    plot_percentiles(axs[0], positive_inputs, 'blue', 'Positive Input Lengths')
+    plot_percentiles(axs[1], negative_inputs, 'red', 'Negative Input Lengths')
+    plt.tight_layout()
+
+    filename = 'percentile_plots.png'
+    counter = 1
+
+    while os.path.exists(filename):
+        filename = f'percentile_plots_{counter}.png'
+        counter += 1
+
+    plt.savefig(filename)
+    print(f"Saved percentile plots to {filename}")
+
+def generate_RFixer_input(filtered_data, directory, OR_INPUTS=False):
+    if os.path.exists(directory):
+        for filename in os.listdir(directory):
+            if re.match(r'^\d+\.txt$', filename):
+                os.remove(os.path.join(directory, filename))
+    else:
+        os.makedirs(directory)
+
+    for entry in filtered_data:
+        file_name = f"{directory}/{entry['id']}.txt"
+        with open(file_name, 'w') as file:
+            if OR_INPUTS:
+                file.write(f"{entry['positive_inputs'][0]}|{entry['negative_inputs'][0]}" + '\n')
+            else:
+                file.write("w*" + '\n')
+            file.write('+++\n')
+            file.write('\n'.join(entry['positive_inputs']) + '\n')
+            file.write('---\n')
+            file.write('\n'.join(entry['negative_inputs']) + '\n')
+
+
+INFILE = sys.argv[1] if len(sys.argv) > 1 else './regex.ndjson'
+OUTDIR = sys.argv[2] if len(sys.argv) > 2 else './output'
+UPPER_BOUND = 20
+LOWER_BOUND = 10
+
+positive_lengths, negative_lengths, data = load_data(INFILE)
+filtered_positive_inputs, filtered_negative_inputs, filtered_data = filter_entries(positive_lengths, negative_lengths, data, UPPER_BOUND, LOWER_BOUND)
+
+print (f'Total Packages {len (filtered_data)}')
+
+generate_RFixer_input(filtered_data, OUTDIR)
+solutions = run_rfixer(OUTDIR)
+dump_dict_to_ndjson (solutions)
+
+
+for id, solution in solutions.items():
+    data[id]['solution'] = solution
+
+
+dump_dict_to_ndjson (data)
