@@ -3,65 +3,73 @@
 # Directories for the test suites and the processed output
 TEST_SUITE_DIR="./test-suites"
 OUT_DIR="./test-suites/processed"
-concat_output_file="./temp.ndjson"
+concat_output_file="./.temp.ndjson"
 final_output_file="./regex.ndjson"
 RFixer_OUTDIR="./rfixer_output"
 
 # Create the output directory if it doesn't exist
 mkdir -p "$OUT_DIR"
 
-# Loop through each file in the test suites directory
-for file in $TEST_SUITE_DIR/*
-do
-    # Continue to next iteration if it's not a file
-    if [ ! -f "$file" ]; then
-        continue
-    fi
+if [ -f "$concat_output_file" ]; then
+    line_count=$(wc -l < "$concat_output_file")
 
-    # Get the filename from the path
-    filename=$(basename -- "$file")
-    # Define the output file path
-    output_file="${OUT_DIR}/${filename}_processed.ndjson"
-    echo "Processing ${file}"
-
-    # Run the Python parser on the file and save to output
-    python3 ./new_ndjson_parser "$file" "$output_file"
-done
-
-# Empty the concat output file to ensure it's clean before appending
-> "$concat_output_file"
-
-# Concatenate all processed files into a single file
-for file in "$OUT_DIR"/*; do
-    # Check if the file exists and is not empty before appending
-    if [ -f "$file" ] && [ -s "$file" ]; then
-        cat "$file" >> "$concat_output_file"
-    fi
-done
-
-echo "Concatenation complete. Sorting...."
-
-# Sort the concatenated file
-python3 ./new_ndjson_parser "$concat_output_file" "$concat_output_file" "--sort-only"
-
-# Check if Node.js is available on the path
-if ! type node > /dev/null; then
-    echo "Node.js not found on Path."
-
-    # Check if nvm is available
-    if type nvm > /dev/null; then
-        echo "Setting Node.js on path using nvm"
-        nvm use node
+    if [ "$line_count" -gt 100 ]; then
+        echo "Skipping processing and concatenation steps; $concat_output_file exists with more than 100 lines."
+        continue_processing=false
     else
-        echo "Neither Node.js nor nvm found."
-        exit 1
+        echo "$concat_output_file exists but does not have more than 100 lines. Re-processing..."
+        continue_processing=true
     fi
+else
+    echo "$concat_output_file does not exist. Starting processing..."
+    continue_processing=true
+fi
+
+if [ "$continue_processing" = true ]; then
+    for file in $TEST_SUITE_DIR/*
+    do
+        if [ ! -f "$file" ]; then
+            continue
+        fi
+
+        filename=$(basename -- "$file")
+        output_file="${OUT_DIR}/${filename}_processed.ndjson"
+        echo "Processing ${file}"
+        python3 ./test-suite-parser.py "$file" "$output_file"
+    done
+
+    > "$concat_output_file"
+
+    for file in "$OUT_DIR"/*; do
+        if [ -f "$file" ] && [ -s "$file" ]; then
+            cat "$file" >> "$concat_output_file"
+        fi
+    done
+
+    echo "Concatenation complete. Sorting...."
+    python3 ./test-suite-parser.py "$concat_output_file" "$concat_output_file" "--sort-only"
+fi
 
 
+if [ ! -f "$final_output_file" ]; then
+    # Check if Node.js is available on the path
+    if ! type node > /dev/null; then
+        echo "Node.js not found on Path."
 
+        # Check if nvm is available
+        if type nvm > /dev/null; then
+            echo "Setting Node.js on path using nvm"
+            nvm use node
+        else
+            echo "Neither Node.js nor nvm found."
+            exit 1
+        fi
 
+    fi
+    
+    node split_inputs.js "$concat_output_file" "$final_output_file"
+else
+    echo "Skipping processing step: $final_output_file exists."
+fi
 
-
-# Run the Node.js script to process the data
-# node split_inputs.js "$concat_output_file" "$final_output_file"
 python3 analyse_regex.py "$final_output_file" "$RFixer_OUTDIR"
