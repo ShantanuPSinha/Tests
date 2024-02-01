@@ -157,7 +157,7 @@ filtered_positive_inputs, filtered_negative_inputs, filtered_data = filter_entri
 print (f'Total Packages {len (filtered_data)}')
 
 generate_RFixer_input(filtered_data, OUTDIR)
-solutions = run_rfixer(OUTDIR)
+solutions = run_rfixer(OUTDIR, True, timeout=20)
 dump_to_ndjson (solutions)
 
 for id, solution in solutions.items():

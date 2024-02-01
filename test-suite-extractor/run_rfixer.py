@@ -10,7 +10,6 @@ def extract_solution(output):
     match = re.search(pattern, output)
     return match.group(1) if match else "NO_SOL"
 
-
 def generate_RFixer_input(filtered_data, directory, OR_INPUTS=False):
     if os.path.exists(directory):
         for filename in os.listdir(directory):
@@ -31,44 +30,35 @@ def generate_RFixer_input(filtered_data, directory, OR_INPUTS=False):
             file.write('---\n')
             file.write('\n'.join(entry['negative_inputs']) + '\n')
 
-def execute_java_command(relative_file_path : str) -> str:
-    original_directory = os.getcwd()
-    os.chdir(RFIXER_DIR)
-    
-    absolute_file_path = os.path.normpath(os.path.join(original_directory, relative_file_path))
-    command = f"java -jar target/regfixer.jar --mode 1 fix --file {absolute_file_path}"
-    
-    try:
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
-        output = result.stdout.decode()
-    except subprocess.TimeoutExpired:
-        output = "TIMEOUT"
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
-        output = None
-    finally:
-        os.chdir(original_directory)
-    return output
 
-def execute_java_command(relative_file_path: str) -> str:
+def execute_java_command(relative_file_path: str, TIMEOUT=10):
     absolute_file_path = os.path.normpath(os.path.join(os.getcwd(), relative_file_path))
-    command = f"java -jar {os.path.join(RFIXER_DIR, 'target/regfixer.jar')} --mode 1 fix --file {absolute_file_path}"
+    jar_path = os.path.join(RFIXER_DIR, 'target/regfixer.jar')
+    command = ["java", "-jar", jar_path, "--mode", "1", "fix", "--file", absolute_file_path]
 
     try:
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10, cwd=RFIXER_DIR)
-        output = result.stdout.decode()
-    except subprocess.TimeoutExpired:
-        output = "TIMEOUT"
+        # Start the subprocess
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=RFIXER_DIR)
+
+        try:
+            # Wait for the command to complete, with timeout
+            stdout, stderr = process.communicate(timeout=TIMEOUT)
+            output = stdout.decode()
+        except subprocess.TimeoutExpired:
+            process.kill()
+            # Skipping the file after timeout
+            output = "SKIPPED: Processing exceeded 10 seconds"
+        except Exception as e:
+            output = f"ERROR: An unexpected error occurred: {e}"
+
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
         output = None
 
     return output
 
-
-def process_file(file, OUTPUT_DIR) -> (int, str):
+def process_file(file, OUTPUT_DIR, timeout=10) -> (int, str):
     file_path = os.path.join(OUTPUT_DIR, file)
-    output = execute_java_command(file_path)
+    output = execute_java_command(file_path, timeout)
     file_id = int (os.path.splitext(file)[0])
 
     if output == "TIMEOUT":
@@ -78,19 +68,19 @@ def process_file(file, OUTPUT_DIR) -> (int, str):
     else:
         return file_id, "ERROR"
 
-def run_rfixer(OUTPUT_DIR, use_multithreading=False, max_cores=(os.cpu_count() // 2)):
+def run_rfixer(OUTPUT_DIR, use_multithreading=True, max_cores=(os.cpu_count() // 2), timeout=10):
     files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith('.txt')]
     solutions = {}
 
     def process_files_sequentially():
         for file in tqdm(files, desc='Processing files', unit='file'):
-            file_id, solution = process_file(file, OUTPUT_DIR)
+            file_id, solution = process_file(file, OUTPUT_DIR, timeout)
             solutions[file_id] = solution
 
     def process_files_multithreaded():
         with ThreadPoolExecutor(max_workers=max_cores) as executor:
-            futures = [executor.submit(process_file, file, OUTPUT_DIR) for file in files]
-            for future in tqdm(concurrent.futures.as_completed(futures), total=len(files), desc='Processing files', unit='file'):
+            futures = [executor.submit(process_file, file, OUTPUT_DIR, timeout) for file in files]
+            for future in concurrent.futures.as_completed(futures):
                 file_id, solution = future.result()
                 solutions[file_id] = solution
 
