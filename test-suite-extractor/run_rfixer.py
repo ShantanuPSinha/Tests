@@ -1,4 +1,4 @@
-import subprocess, os, re
+import subprocess, os, re, json
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 import concurrent.futures
@@ -47,9 +47,9 @@ def execute_java_command(relative_file_path: str, TIMEOUT=10):
         except subprocess.TimeoutExpired:
             process.kill()
             # Skipping the file after timeout
-            output = "SKIPPED: Processing exceeded 10 seconds"
+            output = "TIMEOUT"
         except Exception as e:
-            output = f"ERROR: An unexpected error occurred: {e}"
+            output = None
 
     except subprocess.CalledProcessError as e:
         output = None
@@ -60,6 +60,7 @@ def process_file(file, OUTPUT_DIR, timeout=10) -> (int, str):
     file_path = os.path.join(OUTPUT_DIR, file)
     output = execute_java_command(file_path, timeout)
     file_id = int (os.path.splitext(file)[0])
+    print (f"Processed: {file_id}")
 
     if output == "TIMEOUT":
         return file_id, "TIMEOUT"
@@ -68,21 +69,34 @@ def process_file(file, OUTPUT_DIR, timeout=10) -> (int, str):
     else:
         return file_id, "ERROR"
 
-def run_rfixer(OUTPUT_DIR, use_multithreading=True, max_cores=(os.cpu_count() // 2), timeout=10):
+def run_rfixer(OUTPUT_DIR, use_multithreading=True, max_cores=(os.cpu_count()), timeout=10):
     files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith('.txt')]
+    ndjson_file_path = os.path.join(OUTPUT_DIR, '.temp_sols.ndjson')
+
     solutions = {}
+
+    def append_solution_to_ndjson_and_collect(file_id, solution):
+        # Append solution to NDJSON file
+        with open(ndjson_file_path, 'a') as ndjson_file:
+            record = json.dumps({'file_id': file_id, 'solution': solution})
+            ndjson_file.write(record + '\n')
+        # Collect solution in memory
+        solutions[file_id] = solution
+
 
     def process_files_sequentially():
         for file in tqdm(files, desc='Processing files', unit='file'):
             file_id, solution = process_file(file, OUTPUT_DIR, timeout)
-            solutions[file_id] = solution
+            append_solution_to_ndjson_and_collect(file_id, solution)
+
 
     def process_files_multithreaded():
-        with ThreadPoolExecutor(max_workers=max_cores) as executor:
+        with ThreadPoolExecutor() as executor:
             futures = [executor.submit(process_file, file, OUTPUT_DIR, timeout) for file in files]
             for future in concurrent.futures.as_completed(futures):
                 file_id, solution = future.result()
-                solutions[file_id] = solution
+                append_solution_to_ndjson_and_collect(file_id, solution)
+
 
     if use_multithreading:
         process_files_multithreaded()

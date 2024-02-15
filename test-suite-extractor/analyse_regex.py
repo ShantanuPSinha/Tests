@@ -123,16 +123,13 @@ def filter_entries(positive_inputs, negative_inputs, data, upper_bound=100, lowe
     return filtered_positive_inputs, filtered_negative_inputs, filtered_data
 
 
-# Define a function to load the NDJSON file into a dictionary
 def load_ndjson_as_dict(file_path):
     data_dict = {}
     try:
         with open(file_path, 'r') as file:
             for line in file:
                 try:
-                    # Parse each line as a JSON object and use a unique identifier as the key
                     json_obj = json.loads(line)
-                    # Assuming the first key-value pair in each JSON object is the identifier
                     key = list(json_obj.keys())[0]
                     data_dict[key] = json_obj[key]
                 except json.JSONDecodeError:
@@ -157,7 +154,7 @@ filtered_positive_inputs, filtered_negative_inputs, filtered_data = filter_entri
 print (f'Total Packages {len (filtered_data)}')
 
 generate_RFixer_input(filtered_data, OUTDIR)
-solutions = run_rfixer(OUTDIR, True, timeout=20)
+solutions = run_rfixer(OUTDIR, True, timeout=25)
 dump_to_ndjson (solutions)
 
 for id, solution in solutions.items():
